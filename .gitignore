@@ -1,0 +1,12 @@
+# papers (copyright) and the Overleaf clone (own git remote)
+references/
+paper/
+# data, environments, caches
+data/
+.venv/
+.cache/
+__pycache__/
+*.pyc
+# large raw outputs (summaries and JSON results are tracked)
+results/**/*_net.npz
+results/**/raw/
