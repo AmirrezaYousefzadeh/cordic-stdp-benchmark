@@ -1,0 +1,169 @@
+case,fo,method,config,cost,max_err,mean_err
+R1 tau=20 steps (dt 1 ms),4,B1 LUT,70 non-zero entries x 5 bit,350,0,0.0
+R1 tau=20 steps (dt 1 ms),4,C1 CORDIC,"4 iterations, W=6",4,1,0.15294117647058825
+R1 tau=20 steps (dt 1 ms),4,B3 bit product,"7 constants, W=5",7,1,0.21176470588235294
+R1 tau=20 steps (dt 1 ms),4,B4 2^x table,"4 x 4 bit table, W=4",4,1,0.17647058823529413
+R1 tau=20 steps (dt 1 ms),4,B4 2^x linear,"F=3, W=4",3,1,0.21176470588235294
+R1 tau=20 steps (dt 1 ms),5,B1 LUT,84 non-zero entries x 6 bit,504,0,0.0
+R1 tau=20 steps (dt 1 ms),5,C1 CORDIC,"5 iterations, W=6",5,1,0.1717171717171717
+R1 tau=20 steps (dt 1 ms),5,B3 bit product,"7 constants, W=6",7,1,0.1414141414141414
+R1 tau=20 steps (dt 1 ms),5,B4 2^x table,"8 x 5 bit table, W=5",8,1,0.1919191919191919
+R1 tau=20 steps (dt 1 ms),5,B4 2^x linear,not reached (F <= Fo+3),,,
+R1 tau=20 steps (dt 1 ms),6,B1 LUT,98 non-zero entries x 7 bit,686,0,0.0
+R1 tau=20 steps (dt 1 ms),6,C1 CORDIC,"7 iterations, W=8",7,1,0.125
+R1 tau=20 steps (dt 1 ms),6,B3 bit product,"7 constants, W=6",7,1,0.4732142857142857
+R1 tau=20 steps (dt 1 ms),6,B4 2^x table,"16 x 6 bit table, W=6",16,1,0.13392857142857142
+R1 tau=20 steps (dt 1 ms),6,B4 2^x linear,not reached (F <= Fo+3),,,
+R1 tau=20 steps (dt 1 ms),8,B1 LUT,125 non-zero entries x 9 bit,1125,0,0.0
+R1 tau=20 steps (dt 1 ms),8,C1 CORDIC,"9 iterations, W=9",9,1,0.1
+R1 tau=20 steps (dt 1 ms),8,B3 bit product,"8 constants, W=8",8,1,0.37857142857142856
+R1 tau=20 steps (dt 1 ms),8,B4 2^x table,"64 x 8 bit table, W=8",64,1,0.14285714285714285
+R1 tau=20 steps (dt 1 ms),8,B4 2^x linear,not reached (F <= Fo+3),,,
+R1 tau=20 steps (dt 1 ms),10,B1 LUT,153 non-zero entries x 11 bit,1683,0,0.0
+R1 tau=20 steps (dt 1 ms),10,C1 CORDIC,"11 iterations, W=13",11,1,0.08333333333333333
+R1 tau=20 steps (dt 1 ms),10,B3 bit product,"8 constants, W=11",8,1,0.11904761904761904
+R1 tau=20 steps (dt 1 ms),10,B4 2^x table,"256 x 10 bit table, W=10",256,1,0.07738095238095238
+R1 tau=20 steps (dt 1 ms),10,B4 2^x linear,not reached (F <= Fo+3),,,
+R1 tau=20 steps (dt 1 ms),12,B1 LUT,181 non-zero entries x 13 bit,2353,0,0.0
+R1 tau=20 steps (dt 1 ms),12,C1 CORDIC,"13 iterations, W=14",13,1,0.08163265306122448
+R1 tau=20 steps (dt 1 ms),12,B3 bit product,"8 constants, W=13",8,1,0.05102040816326531
+R1 tau=20 steps (dt 1 ms),12,B4 2^x table,"1024 x 12 bit table, W=12",1024,1,0.08163265306122448
+R1 tau=20 steps (dt 1 ms),12,B4 2^x linear,not reached (F <= Fo+3),,,
+R1 tau=20 steps (dt 1 ms),16,B1 LUT,236 non-zero entries x 17 bit,4012,0,0.0
+R1 tau=20 steps (dt 1 ms),16,C1 CORDIC,"18 iterations, W=19",18,1,0.027888446215139442
+R1 tau=20 steps (dt 1 ms),16,B3 bit product,"8 constants, W=17",8,1,0.07171314741035857
+R1 tau=20 steps (dt 1 ms),16,B4 2^x table,"16384 x 16 bit table, W=16",16384,1,0.06772908366533864
+R1 tau=20 steps (dt 1 ms),16,B4 2^x linear,not reached (F <= Fo+3),,,
+R1 tau=40 steps (dt 0.5 ms),4,B1 LUT,139 non-zero entries x 5 bit,695,0,0.0
+R1 tau=40 steps (dt 0.5 ms),4,C1 CORDIC,"5 iterations, W=6",5,1,0.1130952380952381
+R1 tau=40 steps (dt 0.5 ms),4,B3 bit product,"8 constants, W=5",8,1,0.20833333333333334
+R1 tau=40 steps (dt 0.5 ms),4,B4 2^x table,"4 x 4 bit table, W=4",4,1,0.20238095238095238
+R1 tau=40 steps (dt 0.5 ms),4,B4 2^x linear,"F=3, W=4",3,1,0.23214285714285715
+R1 tau=40 steps (dt 0.5 ms),5,B1 LUT,167 non-zero entries x 6 bit,1002,0,0.0
+R1 tau=40 steps (dt 0.5 ms),5,C1 CORDIC,"5 iterations, W=6",5,1,0.17346938775510204
+R1 tau=40 steps (dt 0.5 ms),5,B3 bit product,"8 constants, W=6",8,1,0.11224489795918367
+R1 tau=40 steps (dt 0.5 ms),5,B4 2^x table,"8 x 5 bit table, W=5",8,1,0.18877551020408162
+R1 tau=40 steps (dt 0.5 ms),5,B4 2^x linear,not reached (F <= Fo+3),,,
+R1 tau=40 steps (dt 0.5 ms),6,B1 LUT,195 non-zero entries x 7 bit,1365,0,0.0
+R1 tau=40 steps (dt 0.5 ms),6,C1 CORDIC,"7 iterations, W=8",7,1,0.1031390134529148
+R1 tau=40 steps (dt 0.5 ms),6,B3 bit product,"8 constants, W=7",8,1,0.07174887892376682
+R1 tau=40 steps (dt 0.5 ms),6,B4 2^x table,"16 x 6 bit table, W=6",16,1,0.1210762331838565
+R1 tau=40 steps (dt 0.5 ms),6,B4 2^x linear,not reached (F <= Fo+3),,,
+R1 tau=40 steps (dt 0.5 ms),8,B1 LUT,250 non-zero entries x 9 bit,2250,0,0.0
+R1 tau=40 steps (dt 0.5 ms),8,C1 CORDIC,"9 iterations, W=9",9,1,0.10752688172043011
+R1 tau=40 steps (dt 0.5 ms),8,B3 bit product,"9 constants, W=8",9,1,0.4444444444444444
+R1 tau=40 steps (dt 0.5 ms),8,B4 2^x table,"64 x 8 bit table, W=8",64,1,0.14695340501792115
+R1 tau=40 steps (dt 0.5 ms),8,B4 2^x linear,not reached (F <= Fo+3),,,
+R1 tau=40 steps (dt 0.5 ms),10,B1 LUT,305 non-zero entries x 11 bit,3355,0,0.0
+R1 tau=40 steps (dt 0.5 ms),10,C1 CORDIC,"11 iterations, W=13",11,1,0.08682634730538923
+R1 tau=40 steps (dt 0.5 ms),10,B3 bit product,"9 constants, W=11",9,1,0.15269461077844312
+R1 tau=40 steps (dt 0.5 ms),10,B4 2^x table,"256 x 10 bit table, W=10",256,1,0.08682634730538923
+R1 tau=40 steps (dt 0.5 ms),10,B4 2^x linear,not reached (F <= Fo+3),,,
+R1 tau=40 steps (dt 0.5 ms),12,B1 LUT,361 non-zero entries x 13 bit,4693,0,0.0
+R1 tau=40 steps (dt 0.5 ms),12,C1 CORDIC,"13 iterations, W=14",13,1,0.06666666666666667
+R1 tau=40 steps (dt 0.5 ms),12,B3 bit product,"9 constants, W=13",9,1,0.07179487179487179
+R1 tau=40 steps (dt 0.5 ms),12,B4 2^x table,"1024 x 12 bit table, W=12",1024,1,0.07435897435897436
+R1 tau=40 steps (dt 0.5 ms),12,B4 2^x linear,not reached (F <= Fo+3),,,
+R1 tau=40 steps (dt 0.5 ms),16,B1 LUT,472 non-zero entries x 17 bit,8024,0,0.0
+R1 tau=40 steps (dt 0.5 ms),16,C1 CORDIC,"18 iterations, W=19",18,1,0.029940119760479042
+R1 tau=40 steps (dt 0.5 ms),16,B3 bit product,"9 constants, W=17",9,1,0.06187624750499002
+R1 tau=40 steps (dt 0.5 ms),16,B4 2^x table,"16384 x 16 bit table, W=16",16384,1,0.06786427145708583
+R1 tau=40 steps (dt 0.5 ms),16,B4 2^x linear,not reached (F <= Fo+3),,,
+"R2 beta=0.25, 8-bit w (Wu 2021)",4,B1 LUT,256 non-zero entries x 5 bit,1280,0,0.0
+"R2 beta=0.25, 8-bit w (Wu 2021)",4,C1 CORDIC,"5 iterations, W=6",5,1,0.48046875
+"R2 beta=0.25, 8-bit w (Wu 2021)",4,B3 bit product,"8 constants, W=4",8,1,0.30859375
+"R2 beta=0.25, 8-bit w (Wu 2021)",4,B4 2^x table,"8 x 4 bit table, W=4",8,1,0.453125
+"R2 beta=0.25, 8-bit w (Wu 2021)",4,B4 2^x linear,"F=3, W=4",3,1,0.375
+"R2 beta=0.25, 8-bit w (Wu 2021)",5,B1 LUT,256 non-zero entries x 6 bit,1536,0,0.0
+"R2 beta=0.25, 8-bit w (Wu 2021)",5,C1 CORDIC,"6 iterations, W=8",6,1,0.37890625
+"R2 beta=0.25, 8-bit w (Wu 2021)",5,B3 bit product,"8 constants, W=5",8,1,0.25390625
+"R2 beta=0.25, 8-bit w (Wu 2021)",5,B4 2^x table,"16 x 5 bit table, W=5",16,1,0.2578125
+"R2 beta=0.25, 8-bit w (Wu 2021)",5,B4 2^x linear,not reached (F <= Fo+3),,,
+"R2 beta=0.25, 8-bit w (Wu 2021)",6,B1 LUT,256 non-zero entries x 7 bit,1792,0,0.0
+"R2 beta=0.25, 8-bit w (Wu 2021)",6,C1 CORDIC,"7 iterations, W=9",7,1,0.43359375
+"R2 beta=0.25, 8-bit w (Wu 2021)",6,B3 bit product,"8 constants, W=7",8,1,0.24609375
+"R2 beta=0.25, 8-bit w (Wu 2021)",6,B4 2^x table,"32 x 6 bit table, W=6",32,1,0.32421875
+"R2 beta=0.25, 8-bit w (Wu 2021)",6,B4 2^x linear,not reached (F <= Fo+3),,,
+"R2 beta=0.25, 8-bit w (Wu 2021)",8,B1 LUT,256 non-zero entries x 9 bit,2304,0,0.0
+"R2 beta=0.25, 8-bit w (Wu 2021)",8,C1 CORDIC,"9 iterations, W=12",9,1,0.453125
+"R2 beta=0.25, 8-bit w (Wu 2021)",8,B3 bit product,"8 constants, W=9",8,1,0.19140625
+"R2 beta=0.25, 8-bit w (Wu 2021)",8,B4 2^x table,"128 x 8 bit table, W=8",128,1,0.296875
+"R2 beta=0.25, 8-bit w (Wu 2021)",8,B4 2^x linear,not reached (F <= Fo+3),,,
+"R2 beta=0.25, 8-bit w (Wu 2021)",10,B1 LUT,256 non-zero entries x 11 bit,2816,0,0.0
+"R2 beta=0.25, 8-bit w (Wu 2021)",10,C1 CORDIC,"11 iterations, W=13",11,1,0.4375
+"R2 beta=0.25, 8-bit w (Wu 2021)",10,B3 bit product,"8 constants, W=11",8,1,0.31640625
+"R2 beta=0.25, 8-bit w (Wu 2021)",10,B4 2^x table,"512 x 10 bit table, W=10",512,1,0.30078125
+"R2 beta=0.25, 8-bit w (Wu 2021)",10,B4 2^x linear,not reached (F <= Fo+3),,,
+"R2 beta=0.25, 8-bit w (Wu 2021)",12,B1 LUT,256 non-zero entries x 13 bit,3328,0,0.0
+"R2 beta=0.25, 8-bit w (Wu 2021)",12,C1 CORDIC,"13 iterations, W=15",13,1,0.37109375
+"R2 beta=0.25, 8-bit w (Wu 2021)",12,B3 bit product,"8 constants, W=13",8,1,0.41015625
+"R2 beta=0.25, 8-bit w (Wu 2021)",12,B4 2^x table,"2048 x 12 bit table, W=12",2048,1,0.3203125
+"R2 beta=0.25, 8-bit w (Wu 2021)",12,B4 2^x linear,not reached (F <= Fo+3),,,
+"R2 beta=0.25, 8-bit w (Wu 2021)",16,B1 LUT,256 non-zero entries x 17 bit,4352,0,0.0
+"R2 beta=0.25, 8-bit w (Wu 2021)",16,C1 CORDIC,"18 iterations, W=19",18,1,0.49609375
+"R2 beta=0.25, 8-bit w (Wu 2021)",16,B3 bit product,"8 constants, W=18",8,1,0.43359375
+"R2 beta=0.25, 8-bit w (Wu 2021)",16,B4 2^x table,"32768 x 16 bit table, W=16",32768,1,0.29296875
+"R2 beta=0.25, 8-bit w (Wu 2021)",16,B4 2^x linear,not reached (F <= Fo+3),,,
+"R2 beta=3, 8-bit w",4,B1 LUT,256 non-zero entries x 5 bit,1280,0,0.0
+"R2 beta=3, 8-bit w",4,C1 CORDIC,"5 iterations, W=6",5,1,0.15625
+"R2 beta=3, 8-bit w",4,B3 bit product,"8 constants, W=4",8,1,0.19140625
+"R2 beta=3, 8-bit w",4,B4 2^x table,"8 x 4 bit table, W=4",8,1,0.17578125
+"R2 beta=3, 8-bit w",4,B4 2^x linear,"F=3, W=4",3,1,0.31640625
+"R2 beta=3, 8-bit w",5,B1 LUT,256 non-zero entries x 6 bit,1536,0,0.0
+"R2 beta=3, 8-bit w",5,C1 CORDIC,"6 iterations, W=7",6,1,0.203125
+"R2 beta=3, 8-bit w",5,B3 bit product,"8 constants, W=5",8,1,0.5859375
+"R2 beta=3, 8-bit w",5,B4 2^x table,"16 x 5 bit table, W=5",16,1,0.1640625
+"R2 beta=3, 8-bit w",5,B4 2^x linear,not reached (F <= Fo+3),,,
+"R2 beta=3, 8-bit w",6,B1 LUT,256 non-zero entries x 7 bit,1792,0,0.0
+"R2 beta=3, 8-bit w",6,C1 CORDIC,"7 iterations, W=8",7,1,0.19140625
+"R2 beta=3, 8-bit w",6,B3 bit product,"8 constants, W=7",8,1,0.15234375
+"R2 beta=3, 8-bit w",6,B4 2^x table,"32 x 6 bit table, W=6",32,1,0.12109375
+"R2 beta=3, 8-bit w",6,B4 2^x linear,not reached (F <= Fo+3),,,
+"R2 beta=3, 8-bit w",8,B1 LUT,256 non-zero entries x 9 bit,2304,0,0.0
+"R2 beta=3, 8-bit w",8,C1 CORDIC,"9 iterations, W=11",9,1,0.15234375
+"R2 beta=3, 8-bit w",8,B3 bit product,"8 constants, W=9",8,1,0.19921875
+"R2 beta=3, 8-bit w",8,B4 2^x table,"128 x 8 bit table, W=8",128,1,0.1640625
+"R2 beta=3, 8-bit w",8,B4 2^x linear,not reached (F <= Fo+3),,,
+"R2 beta=3, 8-bit w",10,B1 LUT,256 non-zero entries x 11 bit,2816,0,0.0
+"R2 beta=3, 8-bit w",10,C1 CORDIC,"11 iterations, W=13",11,1,0.19921875
+"R2 beta=3, 8-bit w",10,B3 bit product,"8 constants, W=11",8,1,0.1328125
+"R2 beta=3, 8-bit w",10,B4 2^x table,"256 x 10 bit table, W=10",256,1,0.26953125
+"R2 beta=3, 8-bit w",10,B4 2^x linear,not reached (F <= Fo+3),,,
+"R2 beta=3, 8-bit w",12,B1 LUT,256 non-zero entries x 13 bit,3328,0,0.0
+"R2 beta=3, 8-bit w",12,C1 CORDIC,"13 iterations, W=15",13,1,0.15625
+"R2 beta=3, 8-bit w",12,B3 bit product,"8 constants, W=13",8,1,0.13671875
+"R2 beta=3, 8-bit w",12,B4 2^x table,"2048 x 12 bit table, W=12",2048,1,0.1484375
+"R2 beta=3, 8-bit w",12,B4 2^x linear,not reached (F <= Fo+3),,,
+"R2 beta=3, 8-bit w",16,B1 LUT,256 non-zero entries x 17 bit,4352,0,0.0
+"R2 beta=3, 8-bit w",16,C1 CORDIC,"18 iterations, W=18",18,1,0.19140625
+"R2 beta=3, 8-bit w",16,B3 bit product,"8 constants, W=17",8,1,0.17578125
+"R2 beta=3, 8-bit w",16,B4 2^x table,"16384 x 16 bit table, W=16",16384,1,0.06640625
+"R2 beta=3, 8-bit w",16,B4 2^x linear,not reached (F <= Fo+3),,,
+R1 B2 tau_eff=15.49 steps (k=4),4,B2 shift decay (floor),register W=8,8,1,0.4393939393939394
+R1 B2 tau_eff=15.49 steps (k=4),4,B2 shift decay (round),register W=7,7,1,0.22727272727272727
+R1 B2 tau_eff=15.49 steps (k=4),5,B2 shift decay (floor),register W=9,9,1,0.4155844155844156
+R1 B2 tau_eff=15.49 steps (k=4),5,B2 shift decay (round),register W=8,8,1,0.18181818181818182
+R1 B2 tau_eff=15.49 steps (k=4),6,B2 shift decay (floor),register W=10,10,1,0.41379310344827586
+R1 B2 tau_eff=15.49 steps (k=4),6,B2 shift decay (round),register W=9,9,1,0.1724137931034483
+R1 B2 tau_eff=15.49 steps (k=4),8,B2 shift decay (floor),register W=12,12,1,0.48623853211009177
+R1 B2 tau_eff=15.49 steps (k=4),8,B2 shift decay (round),register W=11,11,1,0.1651376146788991
+R1 B2 tau_eff=15.49 steps (k=4),10,B2 shift decay (floor),register W=14,14,1,0.4461538461538462
+R1 B2 tau_eff=15.49 steps (k=4),10,B2 shift decay (round),register W=13,13,1,0.13076923076923078
+R1 B2 tau_eff=15.49 steps (k=4),12,B2 shift decay (floor),register W=16,16,1,0.5263157894736842
+R1 B2 tau_eff=15.49 steps (k=4),12,B2 shift decay (round),register W=15,15,1,0.18421052631578946
+R1 B2 tau_eff=15.49 steps (k=4),16,B2 shift decay (floor),register W=20,20,1,0.4
+R1 B2 tau_eff=15.49 steps (k=4),16,B2 shift decay (round),register W=19,19,1,0.11282051282051282
+R1 B2 tau_eff=31.50 steps (k=5),4,B2 shift decay (floor),register W=9,9,1,0.44696969696969696
+R1 B2 tau_eff=31.50 steps (k=5),4,B2 shift decay (round),register W=8,8,1,0.19696969696969696
+R1 B2 tau_eff=31.50 steps (k=5),5,B2 shift decay (floor),register W=10,10,1,0.43506493506493504
+R1 B2 tau_eff=31.50 steps (k=5),5,B2 shift decay (round),register W=9,9,1,0.18831168831168832
+R1 B2 tau_eff=31.50 steps (k=5),6,B2 shift decay (floor),register W=11,11,1,0.42613636363636365
+R1 B2 tau_eff=31.50 steps (k=5),6,B2 shift decay (round),register W=10,10,1,0.14772727272727273
+R1 B2 tau_eff=31.50 steps (k=5),8,B2 shift decay (floor),register W=13,13,1,0.4636363636363636
+R1 B2 tau_eff=31.50 steps (k=5),8,B2 shift decay (round),register W=12,12,1,0.1590909090909091
+R1 B2 tau_eff=31.50 steps (k=5),10,B2 shift decay (floor),register W=15,15,1,0.4714828897338403
+R1 B2 tau_eff=31.50 steps (k=5),10,B2 shift decay (round),register W=14,14,1,0.12547528517110265
+R1 B2 tau_eff=31.50 steps (k=5),12,B2 shift decay (floor),register W=17,17,1,0.4234527687296417
+R1 B2 tau_eff=31.50 steps (k=5),12,B2 shift decay (round),register W=16,16,1,0.10749185667752444
+R1 B2 tau_eff=31.50 steps (k=5),16,B2 shift decay (floor),register W=21,21,1,0.47715736040609136
+R1 B2 tau_eff=31.50 steps (k=5),16,B2 shift decay (round),register W=20,20,1,0.10406091370558376
