@@ -33,7 +33,7 @@ paper lives in the Overleaf project (`paper/` is a local git clone of it).
 
 Taken by Amir on 2026-11-12: D1–D9 of section 11. In short: MNIST only; the recommended methods (D2, to be checked
 again); N_exc = 100 and 400; iso-accuracy within 0.5 pp over 10 seeds; Level 1 for all methods and Level 2 for the
-best ones (D5, to be checked again); a private GitHub repository; **we do not contact the papers' authors**; neutral
+best ones (D5, to be checked again); a GitHub repository (made public on 2026-11-13 at Amir's request); **we do not contact the papers' authors**; neutral
 wording on the papers' inconsistencies; Edris follows everything through the shared Drive folder.
 
 ## 1. The question and the claim
@@ -215,8 +215,8 @@ CORDIC/
 ```
 
 - **Git:** one local git repository for everything except `paper/` (it has its own Overleaf remote).
-- **D6 (decided), GitHub:** a private GitHub repository, made public at submission. I create it when the first code
-  lands (P1).
+- **D6 (decided), GitHub:** created private on 2026-11-13 and made public the same day at Amir's request
+  (`AmirrezaYousefzadeh/cordic-stdp-benchmark`; noreply author email, no Claude trailer, Drive ids never committed).
 - **Google Drive:** the folder `CORDIC` in Amir's Drive holds the plan, the notes and later the specs and results
   summaries, for Edris to follow (D9). The local folder is the master copy; Claude uploads new versions after each
   change. The Drive connector cannot overwrite a file, so an update is a new upload plus moving the old file to the
