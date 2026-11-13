@@ -19,12 +19,14 @@ def cost(argv):
 CAMPAIGNS = {}
 
 # E2: where is the accuracy knee? Ideal units (LUT = exact rounding) at decreasing output precision.
-#  R1: the presynaptic trace of the power-law rule (D&C's main rule) through an event-driven unit of Fo bits.
-#  R2: both weight-dependence factors of the exponential rule (beta = 3) through a unit of Fo bits.
+#  Rule P: D&C's power-law rule (their main rule); its exponential is the presynaptic trace (R1).
+#  Rule E: D&C's exponential weight-dependence rule with beta = 0.25, as Wu et al. 2021 (TCAS-I) use it; it has both
+#          roles: the presynaptic trace (R1) and the weight-dependence factors e^(-beta w), e^(-beta (1-w)) (R2).
 e2 = {"P_float": BASE + ["--rule", "power"],
-      "E3_float": BASE + ["--rule", "expw", "--set", "beta=3"]}
+      "E_float": BASE + ["--rule", "expw", "--set", "beta=0.25"]}
 for fo in (2, 3, 4, 5, 6, 8):
     e2[f"P_preLUT_fo{fo}"] = BASE + ["--rule", "power", "--pre-unit", "lut", "--pre-fo", str(fo)]
+    e2[f"E_preLUT_fo{fo}"] = BASE + ["--rule", "expw", "--set", "beta=0.25", "--pre-unit", "lut", "--pre-fo", str(fo)]
 for fo in (2, 3, 4, 6, 8):
-    e2[f"E3_wLUT_fo{fo}"] = BASE + ["--rule", "expw", "--set", "beta=3", "--w-unit", "lut", "--w-fo", str(fo)]
+    e2[f"E_wLUT_fo{fo}"] = BASE + ["--rule", "expw", "--set", "beta=0.25", "--w-unit", "lut", "--w-fo", str(fo)]
 CAMPAIGNS["e2_precision"] = e2

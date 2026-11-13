@@ -106,9 +106,18 @@ def _geometric_gap(p):
 
 
 @nb.njit(cache=True)
-def run_phase(images, order, learn, prm, opt, W, theta, delays, counts, stats, seed):
+def run_phase(images, order, learn, prm, opt, W, theta, delays, counts, stats, seed,
+              tab_pre, fo_pre, tab_w, fo_w):
     """Present images[order[k]] for k = 0..K-1. counts[k, j] = spikes of excitatory neuron j during the accepted
-    presentation of example k. learn=True: STDP, adaptive threshold and normalisation on. Mutates W, theta, stats."""
+    presentation of example k. learn=True: STDP, adaptive threshold and normalisation on. Mutates W, theta, stats.
+
+    Quantised exponential units (empty table = float64 as in the reference):
+    tab_pre[d] = output code (fo_pre fraction bits) of an exp unit for e^(-d dt/tau_pre), d in steps; d beyond the
+        table gives 0. The presynaptic trace is then an integer with fo_pre fraction bits: on a presynaptic spike
+        X = round(X e(d)) + 1 (or X = 1 with trace_set), read as round(X e(d)). This is exactly what an
+        event-driven learning engine with that unit and one multiplier computes.
+    tab_w[nw] = output code (fo_w fraction bits) of an exp unit for e^(-beta nw/256), nw = round(256 w) in 0..256,
+        used for both weight-dependence factors of the exponential rule (e^(-beta w) and e^(-beta (1 - w)))."""
     np.random.seed(seed)
     n_in = W.shape[0]
     n = W.shape[1]
@@ -139,6 +148,15 @@ def run_phase(images, order, learn, prm, opt, W, theta, delays, counts, stats, s
     ge_e = np.zeros(n); gi_e = np.zeros(n); ge_i = np.zeros(n); gi_i = np.zeros(n)
     refr_e = np.zeros(n, dtype=np.int64); refr_i = np.zeros(n, dtype=np.int64)
     xpre = np.zeros(n_in); tpre = np.zeros(n_in, dtype=np.int64)
+    qpre = tab_pre.shape[0] > 0
+    if qpre and rule == RULE_TRIPLET:
+        raise ValueError("quantised presynaptic traces are not implemented for the triplet rule")
+    lpre = tab_pre.shape[0]
+    one_pre = 1 << fo_pre
+    half_pre = (1 << (fo_pre - 1)) if fo_pre > 0 else 0
+    xq = np.zeros(n_in, dtype=np.int64)
+    qw = tab_w.shape[0] > 0
+    sc_w = 1.0 / (1 << fo_w)
     xp1 = np.zeros(n); xp2 = np.zeros(n); tpost = np.zeros(n, dtype=np.int64)
     nxt = np.zeros(n_in, dtype=np.int64)
     act = np.zeros(n_in, dtype=np.int64)
@@ -194,7 +212,14 @@ def run_phase(images, order, learn, prm, opt, W, theta, delays, counts, stats, s
                                             p1 = xp1[j] * math.exp(-(t - tpost[j]) * a_p1)
                                             w = W[i, j] - eta_pre * p1 * W[i, j] ** mu
                                         W[i, j] = w if w > 0.0 else 0.0
-                                if opt[O_TRACE_SET] == 1:
+                                if qpre:
+                                    if opt[O_TRACE_SET] == 1:
+                                        xq[i] = one_pre
+                                    else:
+                                        dd = t - tpre[i]
+                                        e = tab_pre[dd] if dd < lpre else 0
+                                        xq[i] = ((xq[i] * e + half_pre) >> fo_pre) + one_pre
+                                elif opt[O_TRACE_SET] == 1:
                                     xpre[i] = 1.0
                                 else:
                                     xpre[i] = xpre[i] * math.exp(-(t - tpre[i]) * a_pre) + 1.0
@@ -259,10 +284,21 @@ def run_phase(images, order, learn, prm, opt, W, theta, delays, counts, stats, s
                             tpost[j] = t
                         else:
                             for i in range(n_in):
-                                x = xpre[i] * math.exp(-(t - tpre[i]) * a_pre)
+                                if qpre:
+                                    dd = t - tpre[i]
+                                    e = tab_pre[dd] if dd < lpre else 0
+                                    x = ((xq[i] * e + half_pre) >> fo_pre) / one_pre
+                                else:
+                                    x = xpre[i] * math.exp(-(t - tpre[i]) * a_pre)
                                 w = W[i, j]
                                 if rule == RULE_EXPW:
-                                    w += eta_post * (x * math.exp(-beta * w) - xtar * math.exp(-beta * (wmax - w)))
+                                    if qw:
+                                        nw = int(w * 256.0 + 0.5)
+                                        if nw > 256:
+                                            nw = 256
+                                        w += eta_post * (x * (tab_w[nw] * sc_w) - xtar * (tab_w[256 - nw] * sc_w))
+                                    else:
+                                        w += eta_post * (x * math.exp(-beta * w) - xtar * math.exp(-beta * (wmax - w)))
                                 else:
                                     w += eta_post * (x - xtar) * (wmax - w) ** mu
                                 if w < 0.0:
@@ -296,6 +332,7 @@ def run_phase(images, order, learn, prm, opt, W, theta, delays, counts, stats, s
                         theta[j] *= dec_th ** n_rest
                 for i in range(n_in):
                     xpre[i] = 0.0
+                    xq[i] = 0
                 for dd in range(D):
                     for j in range(n):
                         ring[dd, j] = 0.0
