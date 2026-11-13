@@ -18,10 +18,11 @@ sys.path.insert(0, ROOT)
 import dc_sim as S  # noqa: E402
 from model import exp_units as U  # noqa: E402
 
-UNITS = {"lut": U.lut_exp, "cordic": U.cordic_exp, "bitprod": U.bitprod_exp, "pow2": U.pow2_exp, "rect": None}
+UNITS = {"lut": U.lut_exp, "cordic": U.cordic_exp, "bitprod": U.bitprod_exp, "pow2": U.pow2_exp, "rect": None,
+         "lutbias": None}
 
 
-def unit_table(unit, c, fo, guard, iters, frac, nmax):
+def unit_table(unit, c, fo, guard, iters, frac, nmax, bias=0.0):
     """Output codes of an exp unit for inputs 0..nmax-1 (the whole useful domain)."""
     if unit == "float":
         return np.zeros(0, dtype=np.int64)
@@ -34,6 +35,11 @@ def unit_table(unit, c, fo, guard, iters, frac, nmax):
         return U.bitprod_exp(n, c, fo, guard=guard)
     if unit == "pow2":
         return U.pow2_exp(n, c, fo, guard=guard, frac_bits=frac)
+    if unit == "lutbias":
+        # a table rounded with a deliberate offset of `bias` LSB: floor(2^fo e^(-n c) + 1/2 + bias), clamped;
+        # tests whether the sign of a unit's mean error matters (E4)
+        v = np.floor(np.exp(-n * c) * (1 << fo) + 0.5 + bias)
+        return np.clip(v, 0, 1 << fo).astype(np.int64)
     if unit == "rect":
         # B5 ablation, no exponential at all: a box kernel of width tau (1/c steps)
         return np.where(n < int(round(1.0 / c)), 1 << fo, 0).astype(np.int64)
@@ -94,6 +100,7 @@ def main(argv=None):
     ap.add_argument("--unit-guard", type=int, default=3)
     ap.add_argument("--unit-iters", type=int, default=None, help="CORDIC iterations (default Fo+guard+1)")
     ap.add_argument("--unit-frac", type=int, default=None, help="2^x fraction bits (default Fo+1)")
+    ap.add_argument("--unit-bias", type=float, default=0.0, help="lutbias: rounding offset in LSB")
     args = ap.parse_args(argv)
 
     os.makedirs(args.out, exist_ok=True)
@@ -103,9 +110,11 @@ def main(argv=None):
     c_pre = prm[S.DT] / prm[S.TAU_PRE]
     n_pre = int(np.ceil((args.pre_fo + 2) * np.log(2) / c_pre)) + 1
     tab_pre = unit_table(args.pre_unit, c_pre, args.pre_fo, args.unit_guard, args.unit_iters,
-                         args.unit_frac if args.unit_frac else args.pre_fo + 1, n_pre)
+                         args.unit_frac if args.unit_frac else args.pre_fo + 1, n_pre, args.unit_bias)
     tab_w = unit_table(args.w_unit, prm[S.BETA] / 256.0, args.w_fo, args.unit_guard, args.unit_iters,
-                       args.unit_frac if args.unit_frac else args.w_fo + 1, 257)
+                       args.unit_frac if args.unit_frac else args.w_fo + 1, 257, args.unit_bias)
+    hist_d = np.zeros(S.HIST_D, dtype=np.int64)
+    hist_w = np.zeros(257, dtype=np.int64)
     S.seed_rng(args.seed)
     W, delays, theta = S.init_network(784, args.n, prm, 1000 + args.seed)
     stats_tr = np.zeros(S.NSTAT, dtype=np.int64)
@@ -116,17 +125,19 @@ def main(argv=None):
     order_tr = np.arange(args.train) % 60000           # MNIST order, as the public code (j % 60000)
     counts_tr = np.zeros((args.train, args.n), dtype=np.int64)
     S.run_phase(xtr, order_tr, True, prm, opt, W, theta, delays, counts_tr, stats_tr, 2000 + args.seed,
-                tab_pre, args.pre_fo, tab_w, args.w_fo)
+                tab_pre, args.pre_fo, tab_w, args.w_fo, hist_d, hist_w)
     t1 = time.time()
     order_lb = np.arange(args.label) % 60000
     counts_lb = np.zeros((args.label, args.n), dtype=np.int64)
     S.run_phase(xtr, order_lb, False, prm, opt, W, theta, delays, counts_lb, stats_lb, 3000 + args.seed,
-                tab_pre, args.pre_fo, tab_w, args.w_fo)
+                tab_pre, args.pre_fo, tab_w, args.w_fo, np.zeros(S.HIST_D, dtype=np.int64),
+                np.zeros(257, dtype=np.int64))
     t2 = time.time()
     order_te = np.arange(args.test)
     counts_te = np.zeros((args.test, args.n), dtype=np.int64)
     S.run_phase(xte, order_te, False, prm, opt, W, theta, delays, counts_te, stats_te, 4000 + args.seed,
-                tab_pre, args.pre_fo, tab_w, args.w_fo)
+                tab_pre, args.pre_fo, tab_w, args.w_fo, np.zeros(S.HIST_D, dtype=np.int64),
+                np.zeros(257, dtype=np.int64))
     t3 = time.time()
 
     yl = ytr[order_lb]
@@ -155,6 +166,10 @@ def main(argv=None):
         "mean_exc_spikes_per_test_example": float(counts_te.sum(1).mean()),
         "theta_mean": float(theta.mean()), "w_colsum_mean": float(W.sum(0).mean()),
         "pre_table": tab_pre.tolist(), "w_table_len": int(tab_w.shape[0]),
+        # operand histograms of the training phase (trailing zeros trimmed): dt in steps at R1 evaluations,
+        # weight code round(256 w) at R2 evaluations
+        "hist_dt_train": np.trim_zeros(hist_d, "b").tolist(),
+        "hist_wcode_train": np.trim_zeros(hist_w, "b").tolist(),
         "seconds": {"train": t1 - t0, "label": t2 - t1, "test": t3 - t2},
         "env": {"python": platform.python_version(), "numpy": np.__version__,
                 "numba": __import__("numba").__version__, "host": platform.node(), "git": git_commit()},

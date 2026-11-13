@@ -53,3 +53,36 @@ for rule, rargs in (("E", ["--rule", "expw", "--set", "beta=0.25"]), ("P", ["--r
 e3["E_beta0"] = BASE + ["--rule", "expw", "--set", "beta=0"]
 e3["E_beta0_preLUT_fo3"] = BASE + ["--rule", "expw", "--set", "beta=0", "--pre-unit", "lut", "--pre-fo", "3"]
 CAMPAIGNS["e3_methods_ablations"] = e3
+
+# E4 (2026-11-13; decisions D10: Wu's rule is the main rule, D11: N = 400 only for final points):
+#  (a) 10 seeds at the key points of E2/E3; (b) the biased-table test: is the sign of a unit's mean error what costs
+#  accuracy (the smallest CORDIC is biased by about +0.23 LSB over the first 2 tau at Fo = 3)? (c) nearest-spike
+#  traces (trace set to 1 at each presynaptic spike): an event-driven engine then needs only a timestamp and the
+#  exp unit, no multiplier.
+E = ["--rule", "expw", "--set", "beta=0.25"]
+E0 = ["--rule", "expw", "--set", "beta=0"]
+P = ["--rule", "power"]
+CMIN4 = ["--pre-unit", "cordic", "--unit-iters", "5", "--unit-guard", "2", "--pre-fo", "4"]
+CMIN3 = ["--pre-unit", "cordic", "--unit-iters", "3", "--unit-guard", "1", "--pre-fo", "3"]
+SET = ["--trace-set", "1"]
+e4 = {
+    "E_float": BASE + E,
+    "E_beta0": BASE + E0,
+    "E_wLUT_fo2": BASE + E + ["--w-unit", "lut", "--w-fo", "2"],
+    "E_preLUT_fo4": BASE + E + ["--pre-unit", "lut", "--pre-fo", "4"],
+    "E_preCORDICmin_fo4": BASE + E + CMIN4,
+    "E_preBITPROD_fo4": BASE + E + ["--pre-unit", "bitprod", "--unit-guard", "1", "--pre-fo", "4"],
+    "E_beta0_preLUT_fo4": BASE + E0 + ["--pre-unit", "lut", "--pre-fo", "4"],
+    "P_float": BASE + P,
+    "P_preLUT_fo3": BASE + P + ["--pre-unit", "lut", "--pre-fo", "3"],
+    "P_preCORDICmin_fo3": BASE + P + CMIN3,
+    "P_preLUTbias+0.25_fo3": BASE + P + ["--pre-unit", "lutbias", "--unit-bias", "0.25", "--pre-fo", "3"],
+    "P_preLUTbias-0.25_fo3": BASE + P + ["--pre-unit", "lutbias", "--unit-bias", "-0.25", "--pre-fo", "3"],
+    "E_preLUTbias+0.25_fo3": BASE + E + ["--pre-unit", "lutbias", "--unit-bias", "0.25", "--pre-fo", "3"],
+    "E_preLUTbias-0.25_fo3": BASE + E + ["--pre-unit", "lutbias", "--unit-bias", "-0.25", "--pre-fo", "3"],
+    "E_set_float": BASE + E + SET,
+    "E_set_preLUT_fo4": BASE + E + SET + ["--pre-unit", "lut", "--pre-fo", "4"],
+    "E_set_preLUT_fo3": BASE + E + SET + ["--pre-unit", "lut", "--pre-fo", "3"],
+    "E_set_preCORDICmin_fo4": BASE + E + SET + CMIN4,
+}
+CAMPAIGNS["e4_confirm"] = e4

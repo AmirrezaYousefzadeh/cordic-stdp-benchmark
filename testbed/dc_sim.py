@@ -30,14 +30,24 @@ RULES = {"power": RULE_POWER, "expw": RULE_EXPW, "prepost": RULE_PREPOST, "tripl
 # ---- option vector layout (int64) -------------------------------------------------------------------------------
 (O_RULE, O_TRACE_SET, O_NORM, O_DELAYS, O_RESET, O_MAX_BUMPS, NOPT) = range(7)
 # ---- statistics vector layout (int64) ---------------------------------------------------------------------------
-(S_IN_SPIKES, S_E_SPIKES, S_I_SPIKES, S_BUMPS, S_PRESENTATIONS, S_GAVE_UP, S_STEPS, NSTAT) = range(8)
+(S_IN_SPIKES, S_E_SPIKES, S_I_SPIKES, S_BUMPS, S_PRESENTATIONS, S_GAVE_UP, S_STEPS,
+ S_PRE_UPD, S_PRE_EVAL, S_POST_LEARN, S_POST_READ, S_WUPD, S_W_EVAL, NSTAT) = range(14)
+# learning-engine event counts (only while learning):
+#   pre_upd    presynaptic trace updates (one per input spike)
+#   pre_eval   of those, the ones that need an exp evaluation (accumulating traces: X = X e(dt) + 1)
+#   post_learn postsynaptic spikes that trigger a weight-update sweep
+#   post_read  trace reads in those sweeps (n_in per post spike; each one is an exp evaluation, role R1)
+#   wupd       synapse weight updates
+#   w_eval     weight-dependence exp evaluations (role R2; two per update in the exponential rule)
+HIST_D = 4096        # histogram bins of dt (in steps) at R1 evaluations; the last bin collects dt >= HIST_D - 1
 
 PARAM_NAMES = ["dt", "tau_e", "tau_i", "tau_ge", "tau_gi", "vrest_e", "vrest_i", "vreset_e", "vreset_i", "vth_e",
                "vth_i", "offset", "e_exc", "e_inh_e", "e_inh_i", "refr_e", "refr_i", "theta_plus", "tau_theta",
                "theta0", "w_ei", "w_ie", "tau_pre", "tau_post1", "tau_post2", "eta_pre", "eta_post", "x_tar", "mu",
                "beta", "w_max", "norm_sum", "t_pres", "t_rest", "intensity0", "min_spikes", "max_delay", "w_init"]
 OPT_NAMES = ["rule", "trace_set", "normalize", "delays", "reset", "max_bumps"]
-STAT_NAMES = ["input_spikes", "exc_spikes", "inh_spikes", "bumps", "presentations", "gave_up", "steps"]
+STAT_NAMES = ["input_spikes", "exc_spikes", "inh_spikes", "bumps", "presentations", "gave_up", "steps",
+              "pre_upd", "pre_eval", "post_learn", "post_read", "wupd", "w_eval"]
 
 
 def default_params():
@@ -107,7 +117,7 @@ def _geometric_gap(p):
 
 @nb.njit(cache=True)
 def run_phase(images, order, learn, prm, opt, W, theta, delays, counts, stats, seed,
-              tab_pre, fo_pre, tab_w, fo_w):
+              tab_pre, fo_pre, tab_w, fo_w, hist_d, hist_w):
     """Present images[order[k]] for k = 0..K-1. counts[k, j] = spikes of excitatory neuron j during the accepted
     presentation of example k. learn=True: STDP, adaptive threshold and normalisation on. Mutates W, theta, stats.
 
@@ -117,7 +127,9 @@ def run_phase(images, order, learn, prm, opt, W, theta, delays, counts, stats, s
         X = round(X e(d)) + 1 (or X = 1 with trace_set), read as round(X e(d)). This is exactly what an
         event-driven learning engine with that unit and one multiplier computes.
     tab_w[nw] = output code (fo_w fraction bits) of an exp unit for e^(-beta nw/256), nw = round(256 w) in 0..256,
-        used for both weight-dependence factors of the exponential rule (e^(-beta w) and e^(-beta (1 - w)))."""
+        used for both weight-dependence factors of the exponential rule (e^(-beta w) and e^(-beta (1 - w))).
+    hist_d[min(dt, HIST_D-1)] and hist_w[nw] count the operands of the R1 and R2 evaluations while learning (the
+    operand streams for the gate-level power simulation); they are counted in float mode too."""
     np.random.seed(seed)
     n_in = W.shape[0]
     n = W.shape[1]
@@ -212,6 +224,11 @@ def run_phase(images, order, learn, prm, opt, W, theta, delays, counts, stats, s
                                             p1 = xp1[j] * math.exp(-(t - tpost[j]) * a_p1)
                                             w = W[i, j] - eta_pre * p1 * W[i, j] ** mu
                                         W[i, j] = w if w > 0.0 else 0.0
+                                stats[S_PRE_UPD] += 1
+                                if opt[O_TRACE_SET] == 0:
+                                    stats[S_PRE_EVAL] += 1
+                                    dh = t - tpre[i]
+                                    hist_d[dh if dh < HIST_D else HIST_D - 1] += 1
                                 if qpre:
                                     if opt[O_TRACE_SET] == 1:
                                         xq[i] = one_pre
@@ -273,6 +290,11 @@ def run_phase(images, order, learn, prm, opt, W, theta, delays, counts, stats, s
                     ge_i[j] += prm[W_EI]
                     stats[S_E_SPIKES] += 1
                     if learn:
+                        stats[S_POST_LEARN] += 1
+                        stats[S_POST_READ] += n_in
+                        stats[S_WUPD] += n_in
+                        if rule == RULE_EXPW:
+                            stats[S_W_EVAL] += 2 * n_in
                         if rule == RULE_TRIPLET:
                             p2b = xp2[j] * math.exp(-(t - tpost[j]) * a_p2)
                             for i in range(n_in):
@@ -284,6 +306,8 @@ def run_phase(images, order, learn, prm, opt, W, theta, delays, counts, stats, s
                             tpost[j] = t
                         else:
                             for i in range(n_in):
+                                dh = t - tpre[i]
+                                hist_d[dh if dh < HIST_D else HIST_D - 1] += 1
                                 if qpre:
                                     dd = t - tpre[i]
                                     e = tab_pre[dd] if dd < lpre else 0
@@ -292,6 +316,11 @@ def run_phase(images, order, learn, prm, opt, W, theta, delays, counts, stats, s
                                     x = xpre[i] * math.exp(-(t - tpre[i]) * a_pre)
                                 w = W[i, j]
                                 if rule == RULE_EXPW:
+                                    nh = int(w * 256.0 + 0.5)
+                                    if nh > 256:
+                                        nh = 256
+                                    hist_w[nh] += 1
+                                    hist_w[256 - nh] += 1
                                     if qw:
                                         nw = int(w * 256.0 + 0.5)
                                         if nw > 256:

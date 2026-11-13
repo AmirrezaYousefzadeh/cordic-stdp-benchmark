@@ -288,3 +288,5 @@ A first full draft is possible about 8 weeks after approval; TCAS-II has no fixe
 | D7 | split of the work | as in section 9 (originally including e-mails to the authors) | agreed, but **we cannot contact the authors** |
 | D8 | how to treat the papers' inconsistencies | neutral and factual: a short "reproducibility notes" paragraph or supplementary table, only for what affects the comparison | agreed |
 | D9 | when to tell Edris | after Amir approves this plan | Edris follows everything through the shared Drive folder |
+| D10 | main learning rule of the testbed (new, 2026-11-13) | Wu 2021's exponential weight-dependence rule with β = 0.25 as the main rule (83.3 %, and it uses the exponential in both roles); D&C's power-law rule second | agreed (2026-11-13) |
+| D11 | N = 400 (new, 2026-11-13) | only for the final confirmation points, after profiling why it ran about 15× slower than estimated | agreed (2026-11-13) |
