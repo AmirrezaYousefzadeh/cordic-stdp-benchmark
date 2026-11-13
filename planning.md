@@ -1,8 +1,21 @@
 # CORDIC for on-chip STDP learning: implementation plan
 
-Status: draft 2, 2026-11-12 (Claude, for Amir and Edris). Amir answered decisions D1–D9 on 2026-11-12 (section 11);
+Status: draft 3, 2026-11-13 (Claude, for Amir and Edris). Amir answered decisions D1–D9 on 2026-11-12 (section 11);
 D2 and D5 he will check again later. My reasoning, the evidence from the papers and my predictions are in
-`claude_toughts.md`. Both files are shared through the Google Drive folder `CORDIC`.
+`claude_toughts.md`; the results so far are in `results/README.md`. Code and results: private GitHub repository
+`AmirrezaYousefzadeh/cordic-stdp-benchmark`. Plan, notes and results summary are shared through the Google Drive
+folder `CORDIC`.
+
+## Progress (2026-11-13)
+
+| phase | state |
+|---|---|
+| P0 specs | testbed (`specs/testbed.md`), exponential units batch 1 (`specs/exp_units.md`, draft 3), RTL (`specs/rtl_units.md`) written; paper-specific methods (Wu 2021 angle recoding, Heidarpur/Bahrami) still to do |
+| P1 models | batch 1 (LUT, CORDIC, bit product, 2^x, shift decay) done; 305 independent tests pass |
+| P2 testbed | float reference validated at N = 100 (Wu's rule 83.3 %, D&C power-law 78.0 %); dt = 0.5 ms needed (1 ms is unstable); N = 400 needs profiling (about 15× slower than estimated) |
+| P3 sweeps | E2 (precision knee) and E3 (methods at the knee, ablations) done with 3 seeds; 10-seed confirmation next |
+| P4 RTL | batch 1: 96 modules, all bit-exact against the models; synthesis-only area probe done |
+| P5 sky130, P6 engine, P7 paper | not started |
 
 ## 0. Decisions so far
 
@@ -225,11 +238,10 @@ Claude coordinates, reviews every diff and reports to Amir at the end of each ph
 
 ## 8. Compute and machine rules
 
-- **GPU (RTX 4060 Ti, shared).**
-  - One D&C epoch is 60 000 images × 350 steps. Running many configurations as one batch (one weight matrix per
-    configuration) keeps the GPU busy.
-  - Rough estimate: 8–15 GPU hours for the full P3 sweep at N = 100, a few times more at N = 400. To be measured on
-    a pilot run first.
+- **CPU, not GPU (measured 2026-11-13).** The testbed is an event-driven numba simulator. One N = 100 run
+  (40 000 training examples, a 60 000-example labelling pass, 10 000 test examples) takes about 3.3 min on one
+  core. A campaign with 8 workers does about 60 runs in 30 min. The GPU stays free for the other projects.
+  N = 400 is about 15× slower than expected and is profiled before it is used.
 - **sky130 hardening.** Small blocks (a few hundred to a few thousand cells). Minutes each; up to roughly 30
   configurations (methods × forms × precisions), plus the Level-2 engines.
 - **Every heavy job goes through `jobq`**:

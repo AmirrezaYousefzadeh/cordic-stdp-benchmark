@@ -289,3 +289,31 @@ If the LUT does not win at 8 bits, I will look for the reason before trusting th
   - Amir answered D1–D9: all recommendations accepted (D2 and D5 to be checked again later); we do not contact the
     authors; Edris follows the work through the shared Google Drive folder `CORDIC`.
   - Both files updated with the decisions and rewritten for Amir and Edris as readers; uploaded to Drive.
+- **2026-11-13 (night):** Amir asked to start experiments. Everything is in `results/README.md`; in short:
+  - **Testbed:** the float Diehl & Cook reference is validated at N = 100.
+    - Wu 2021's rule (exponential weight dependence, β = 0.25): 83.3 %.
+    - D&C's power-law rule with the public code's parameters: 78.0 %. D&C retuned two parameters for N = 100
+      without publishing them.
+    - A 1 ms step makes forward Euler unstable, so the testbed keeps 0.5 ms.
+    - The simulator is CPU numba: 3.3 min per run, so the GPU is not needed.
+    - N = 400 was about 15× slower than estimated and was stopped; to be profiled.
+  - **Units:** batch 1 is implemented bit-exactly. A separate test agent wrote 305 tests from the spec alone, found
+    one spec error (the shift-decay bound) and several ambiguities, now resolved in draft 3. Unit sizing for 1 LSB
+    is in `results/units/SIZING.md`.
+  - **E2 (precision knee):** the trace needs about 4 bits. Wu's weight-dependence factor works at 2 bits.
+  - **E3 (methods at the knee and ablations):**
+    - β = 0 (no weight-dependence exponential at all) costs at most about 1 pp, which is n.s. with 3 seeds. Wu's
+      two CORDICs per synapse may be unnecessary.
+    - A box kernel loses 12–32 pp, so the trace does need an exponential, but a coarse one.
+    - The cheapest CORDIC that meets max |err| ≤ 1 loses 3–6 pp on the power-law rule. Its error is biased upward
+      (+0.23 LSB over the first 2τ at 3 bits), so the accumulating trace decays too slowly.
+    - Lesson: a unit-level error bound is not enough; compare at network-level iso-accuracy (as planned), and
+      report the bias.
+  - **RTL:** batch 1 (96 modules) is bit-exact against the models. The Yosys area probe has the LUT smallest at
+    every precision in both roles, so my prediction "CORDIC is smallest at 12+ bits" does not hold for these short
+    input ranges.
+  - **Flow note:** I reported a Yosys/ABC hang with a long TMPDIR to `flow_notes/inbox/`.
+  - **Repository:** the private GitHub repository was created (D6).
+  - **Mistake on my side:** I edited `testbed/dc_sim.py` while the pilot was forking workers from it. I noticed it
+    and reverted within a minute; no run was affected (verified: no worker started in that window). Since then every
+    campaign runs from a frozen copy of the code (`testbed/campaign.py prepare`).
