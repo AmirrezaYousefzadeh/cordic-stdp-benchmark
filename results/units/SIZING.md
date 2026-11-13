@@ -84,79 +84,79 @@
 
 | Fo | method | smallest configuration | mean |err| (LSB) |
 |---|---|---|---|
-| 4 | B1 LUT | 256 non-zero entries x 5 bit | 0.000 |
-| 4 | C1 CORDIC | 5 iterations, W=6 | 0.480 |
-| 4 | B3 bit product | 8 constants, W=4 | 0.309 |
-| 4 | B4 2^x table | 8 x 4 bit table, W=4 | 0.453 |
-| 4 | B4 2^x linear | F=3, W=4 | 0.375 |
-| 5 | B1 LUT | 256 non-zero entries x 6 bit | 0.000 |
-| 5 | C1 CORDIC | 6 iterations, W=8 | 0.379 |
-| 5 | B3 bit product | 8 constants, W=5 | 0.254 |
-| 5 | B4 2^x table | 16 x 5 bit table, W=5 | 0.258 |
+| 4 | B1 LUT | 257 non-zero entries x 5 bit | 0.000 |
+| 4 | C1 CORDIC | 5 iterations, W=6 | 0.479 |
+| 4 | B3 bit product | 9 constants, W=4 | 0.307 |
+| 4 | B4 2^x table | 8 x 4 bit table, W=4 | 0.451 |
+| 4 | B4 2^x linear | F=3, W=4 | 0.377 |
+| 5 | B1 LUT | 257 non-zero entries x 6 bit | 0.000 |
+| 5 | C1 CORDIC | 6 iterations, W=8 | 0.377 |
+| 5 | B3 bit product | 9 constants, W=5 | 0.253 |
+| 5 | B4 2^x table | 16 x 5 bit table, W=5 | 0.257 |
 | 5 | B4 2^x linear | not reached (F <= Fo+3) |  |
-| 6 | B1 LUT | 256 non-zero entries x 7 bit | 0.000 |
-| 6 | C1 CORDIC | 7 iterations, W=9 | 0.434 |
-| 6 | B3 bit product | 8 constants, W=7 | 0.246 |
-| 6 | B4 2^x table | 32 x 6 bit table, W=6 | 0.324 |
+| 6 | B1 LUT | 257 non-zero entries x 7 bit | 0.000 |
+| 6 | C1 CORDIC | 7 iterations, W=9 | 0.432 |
+| 6 | B3 bit product | 9 constants, W=7 | 0.245 |
+| 6 | B4 2^x table | 32 x 6 bit table, W=6 | 0.327 |
 | 6 | B4 2^x linear | not reached (F <= Fo+3) |  |
-| 8 | B1 LUT | 256 non-zero entries x 9 bit | 0.000 |
-| 8 | C1 CORDIC | 9 iterations, W=12 | 0.453 |
-| 8 | B3 bit product | 8 constants, W=9 | 0.191 |
-| 8 | B4 2^x table | 128 x 8 bit table, W=8 | 0.297 |
+| 8 | B1 LUT | 257 non-zero entries x 9 bit | 0.000 |
+| 8 | C1 CORDIC | 9 iterations, W=12 | 0.451 |
+| 8 | B3 bit product | 9 constants, W=9 | 0.195 |
+| 8 | B4 2^x table | 128 x 8 bit table, W=8 | 0.300 |
 | 8 | B4 2^x linear | not reached (F <= Fo+3) |  |
-| 10 | B1 LUT | 256 non-zero entries x 11 bit | 0.000 |
-| 10 | C1 CORDIC | 11 iterations, W=13 | 0.438 |
-| 10 | B3 bit product | 8 constants, W=11 | 0.316 |
-| 10 | B4 2^x table | 512 x 10 bit table, W=10 | 0.301 |
+| 10 | B1 LUT | 257 non-zero entries x 11 bit | 0.000 |
+| 10 | C1 CORDIC | 11 iterations, W=13 | 0.440 |
+| 10 | B3 bit product | 9 constants, W=11 | 0.319 |
+| 10 | B4 2^x table | 512 x 10 bit table, W=10 | 0.300 |
 | 10 | B4 2^x linear | not reached (F <= Fo+3) |  |
-| 12 | B1 LUT | 256 non-zero entries x 13 bit | 0.000 |
-| 12 | C1 CORDIC | 13 iterations, W=15 | 0.371 |
-| 12 | B3 bit product | 8 constants, W=13 | 0.410 |
-| 12 | B4 2^x table | 2048 x 12 bit table, W=12 | 0.320 |
+| 12 | B1 LUT | 257 non-zero entries x 13 bit | 0.000 |
+| 12 | C1 CORDIC | 13 iterations, W=15 | 0.370 |
+| 12 | B3 bit product | 9 constants, W=13 | 0.409 |
+| 12 | B4 2^x table | 2048 x 12 bit table, W=12 | 0.319 |
 | 12 | B4 2^x linear | not reached (F <= Fo+3) |  |
-| 16 | B1 LUT | 256 non-zero entries x 17 bit | 0.000 |
-| 16 | C1 CORDIC | 18 iterations, W=19 | 0.496 |
-| 16 | B3 bit product | 8 constants, W=18 | 0.434 |
-| 16 | B4 2^x table | 32768 x 16 bit table, W=16 | 0.293 |
+| 16 | B1 LUT | 257 non-zero entries x 17 bit | 0.000 |
+| 16 | C1 CORDIC | 18 iterations, W=19 | 0.494 |
+| 16 | B3 bit product | 9 constants, W=18 | 0.436 |
+| 16 | B4 2^x table | 32768 x 16 bit table, W=16 | 0.292 |
 | 16 | B4 2^x linear | not reached (F <= Fo+3) |  |
 
 ## R2 beta=3, 8-bit w
 
 | Fo | method | smallest configuration | mean |err| (LSB) |
 |---|---|---|---|
-| 4 | B1 LUT | 256 non-zero entries x 5 bit | 0.000 |
+| 4 | B1 LUT | 257 non-zero entries x 5 bit | 0.000 |
 | 4 | C1 CORDIC | 5 iterations, W=6 | 0.156 |
-| 4 | B3 bit product | 8 constants, W=4 | 0.191 |
-| 4 | B4 2^x table | 8 x 4 bit table, W=4 | 0.176 |
-| 4 | B4 2^x linear | F=3, W=4 | 0.316 |
-| 5 | B1 LUT | 256 non-zero entries x 6 bit | 0.000 |
-| 5 | C1 CORDIC | 6 iterations, W=7 | 0.203 |
-| 5 | B3 bit product | 8 constants, W=5 | 0.586 |
-| 5 | B4 2^x table | 16 x 5 bit table, W=5 | 0.164 |
+| 4 | B3 bit product | 9 constants, W=4 | 0.191 |
+| 4 | B4 2^x table | 8 x 4 bit table, W=4 | 0.175 |
+| 4 | B4 2^x linear | F=3, W=4 | 0.315 |
+| 5 | B1 LUT | 257 non-zero entries x 6 bit | 0.000 |
+| 5 | C1 CORDIC | 6 iterations, W=7 | 0.202 |
+| 5 | B3 bit product | 9 constants, W=5 | 0.584 |
+| 5 | B4 2^x table | 16 x 5 bit table, W=5 | 0.163 |
 | 5 | B4 2^x linear | not reached (F <= Fo+3) |  |
-| 6 | B1 LUT | 256 non-zero entries x 7 bit | 0.000 |
+| 6 | B1 LUT | 257 non-zero entries x 7 bit | 0.000 |
 | 6 | C1 CORDIC | 7 iterations, W=8 | 0.191 |
-| 6 | B3 bit product | 8 constants, W=7 | 0.152 |
+| 6 | B3 bit product | 9 constants, W=7 | 0.152 |
 | 6 | B4 2^x table | 32 x 6 bit table, W=6 | 0.121 |
 | 6 | B4 2^x linear | not reached (F <= Fo+3) |  |
-| 8 | B1 LUT | 256 non-zero entries x 9 bit | 0.000 |
+| 8 | B1 LUT | 257 non-zero entries x 9 bit | 0.000 |
 | 8 | C1 CORDIC | 9 iterations, W=11 | 0.152 |
-| 8 | B3 bit product | 8 constants, W=9 | 0.199 |
-| 8 | B4 2^x table | 128 x 8 bit table, W=8 | 0.164 |
+| 8 | B3 bit product | 9 constants, W=9 | 0.198 |
+| 8 | B4 2^x table | 128 x 8 bit table, W=8 | 0.163 |
 | 8 | B4 2^x linear | not reached (F <= Fo+3) |  |
-| 10 | B1 LUT | 256 non-zero entries x 11 bit | 0.000 |
-| 10 | C1 CORDIC | 11 iterations, W=13 | 0.199 |
-| 10 | B3 bit product | 8 constants, W=11 | 0.133 |
-| 10 | B4 2^x table | 256 x 10 bit table, W=10 | 0.270 |
+| 10 | B1 LUT | 257 non-zero entries x 11 bit | 0.000 |
+| 10 | C1 CORDIC | 11 iterations, W=13 | 0.198 |
+| 10 | B3 bit product | 9 constants, W=11 | 0.132 |
+| 10 | B4 2^x table | 256 x 10 bit table, W=10 | 0.268 |
 | 10 | B4 2^x linear | not reached (F <= Fo+3) |  |
-| 12 | B1 LUT | 256 non-zero entries x 13 bit | 0.000 |
+| 12 | B1 LUT | 257 non-zero entries x 13 bit | 0.000 |
 | 12 | C1 CORDIC | 13 iterations, W=15 | 0.156 |
-| 12 | B3 bit product | 8 constants, W=13 | 0.137 |
+| 12 | B3 bit product | 9 constants, W=13 | 0.136 |
 | 12 | B4 2^x table | 2048 x 12 bit table, W=12 | 0.148 |
 | 12 | B4 2^x linear | not reached (F <= Fo+3) |  |
-| 16 | B1 LUT | 256 non-zero entries x 17 bit | 0.000 |
+| 16 | B1 LUT | 257 non-zero entries x 17 bit | 0.000 |
 | 16 | C1 CORDIC | 18 iterations, W=18 | 0.191 |
-| 16 | B3 bit product | 8 constants, W=17 | 0.176 |
+| 16 | B3 bit product | 9 constants, W=17 | 0.175 |
 | 16 | B4 2^x table | 16384 x 16 bit table, W=16 | 0.066 |
 | 16 | B4 2^x linear | not reached (F <= Fo+3) |  |
 

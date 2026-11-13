@@ -1,0 +1,211 @@
+git commit 40349518aa9c628667e2e72e0484f549e3eab14d
+testbed/dc_sim.py and testbed/run_dc.py are the quantised-unit versions (not yet committed); diff against HEAD:
+--- /media/amir/CORDIC/testbed/dc_sim.py	2026-11-13 00:05:09.932908375 +0100
++++ /media/amir/CORDIC/results/e2_precision/code/testbed/dc_sim.py	2026-11-13 00:36:22.567749818 +0100
+@@ -106,9 +106,18 @@
+ 
+ 
+ @nb.njit(cache=True)
+-def run_phase(images, order, learn, prm, opt, W, theta, delays, counts, stats, seed):
++def run_phase(images, order, learn, prm, opt, W, theta, delays, counts, stats, seed,
++              tab_pre, fo_pre, tab_w, fo_w):
+     """Present images[order[k]] for k = 0..K-1. counts[k, j] = spikes of excitatory neuron j during the accepted
+-    presentation of example k. learn=True: STDP, adaptive threshold and normalisation on. Mutates W, theta, stats."""
++    presentation of example k. learn=True: STDP, adaptive threshold and normalisation on. Mutates W, theta, stats.
++
++    Quantised exponential units (empty table = float64 as in the reference):
++    tab_pre[d] = output code (fo_pre fraction bits) of an exp unit for e^(-d dt/tau_pre), d in steps; d beyond the
++        table gives 0. The presynaptic trace is then an integer with fo_pre fraction bits: on a presynaptic spike
++        X = round(X e(d)) + 1 (or X = 1 with trace_set), read as round(X e(d)). This is exactly what an
++        event-driven learning engine with that unit and one multiplier computes.
++    tab_w[nw] = output code (fo_w fraction bits) of an exp unit for e^(-beta nw/256), nw = round(256 w) in 0..256,
++        used for both weight-dependence factors of the exponential rule (e^(-beta w) and e^(-beta (1 - w)))."""
+     np.random.seed(seed)
+     n_in = W.shape[0]
+     n = W.shape[1]
+@@ -139,6 +148,15 @@
+     ge_e = np.zeros(n); gi_e = np.zeros(n); ge_i = np.zeros(n); gi_i = np.zeros(n)
+     refr_e = np.zeros(n, dtype=np.int64); refr_i = np.zeros(n, dtype=np.int64)
+     xpre = np.zeros(n_in); tpre = np.zeros(n_in, dtype=np.int64)
++    qpre = tab_pre.shape[0] > 0
++    if qpre and rule == RULE_TRIPLET:
++        raise ValueError("quantised presynaptic traces are not implemented for the triplet rule")
++    lpre = tab_pre.shape[0]
++    one_pre = 1 << fo_pre
++    half_pre = (1 << (fo_pre - 1)) if fo_pre > 0 else 0
++    xq = np.zeros(n_in, dtype=np.int64)
++    qw = tab_w.shape[0] > 0
++    sc_w = 1.0 / (1 << fo_w)
+     xp1 = np.zeros(n); xp2 = np.zeros(n); tpost = np.zeros(n, dtype=np.int64)
+     nxt = np.zeros(n_in, dtype=np.int64)
+     act = np.zeros(n_in, dtype=np.int64)
+@@ -194,7 +212,14 @@
+                                             p1 = xp1[j] * math.exp(-(t - tpost[j]) * a_p1)
+                                             w = W[i, j] - eta_pre * p1 * W[i, j] ** mu
+                                         W[i, j] = w if w > 0.0 else 0.0
+-                                if opt[O_TRACE_SET] == 1:
++                                if qpre:
++                                    if opt[O_TRACE_SET] == 1:
++                                        xq[i] = one_pre
++                                    else:
++                                        dd = t - tpre[i]
++                                        e = tab_pre[dd] if dd < lpre else 0
++                                        xq[i] = ((xq[i] * e + half_pre) >> fo_pre) + one_pre
++                                elif opt[O_TRACE_SET] == 1:
+                                     xpre[i] = 1.0
+                                 else:
+                                     xpre[i] = xpre[i] * math.exp(-(t - tpre[i]) * a_pre) + 1.0
+@@ -259,10 +284,21 @@
+                             tpost[j] = t
+                         else:
+                             for i in range(n_in):
+-                                x = xpre[i] * math.exp(-(t - tpre[i]) * a_pre)
++                                if qpre:
++                                    dd = t - tpre[i]
++                                    e = tab_pre[dd] if dd < lpre else 0
++                                    x = ((xq[i] * e + half_pre) >> fo_pre) / one_pre
++                                else:
++                                    x = xpre[i] * math.exp(-(t - tpre[i]) * a_pre)
+                                 w = W[i, j]
+                                 if rule == RULE_EXPW:
+-                                    w += eta_post * (x * math.exp(-beta * w) - xtar * math.exp(-beta * (wmax - w)))
++                                    if qw:
++                                        nw = int(w * 256.0 + 0.5)
++                                        if nw > 256:
++                                            nw = 256
++                                        w += eta_post * (x * (tab_w[nw] * sc_w) - xtar * (tab_w[256 - nw] * sc_w))
++                                    else:
++                                        w += eta_post * (x * math.exp(-beta * w) - xtar * math.exp(-beta * (wmax - w)))
+                                 else:
+                                     w += eta_post * (x - xtar) * (wmax - w) ** mu
+                                 if w < 0.0:
+@@ -296,6 +332,7 @@
+                         theta[j] *= dec_th ** n_rest
+                 for i in range(n_in):
+                     xpre[i] = 0.0
++                    xq[i] = 0
+                 for dd in range(D):
+                     for j in range(n):
+                         ring[dd, j] = 0.0
+--- /media/amir/CORDIC/testbed/run_dc.py	2026-11-12 23:56:30.545570816 +0100
++++ /media/amir/CORDIC/results/e2_precision/code/testbed/run_dc.py	2026-11-13 00:36:22.577286578 +0100
+@@ -14,7 +14,27 @@
+ HERE = os.path.dirname(os.path.abspath(__file__))
+ ROOT = os.path.dirname(HERE)
+ sys.path.insert(0, HERE)
++sys.path.insert(0, ROOT)
+ import dc_sim as S  # noqa: E402
++from model import exp_units as U  # noqa: E402
++
++UNITS = {"lut": U.lut_exp, "cordic": U.cordic_exp, "bitprod": U.bitprod_exp, "pow2": U.pow2_exp}
++
++
++def unit_table(unit, c, fo, guard, iters, frac, nmax):
++    """Output codes of an exp unit for inputs 0..nmax-1 (the whole useful domain)."""
++    if unit == "float":
++        return np.zeros(0, dtype=np.int64)
++    n = np.arange(nmax, dtype=np.int64)
++    if unit == "lut":
++        return U.lut_exp(n, c, fo)
++    if unit == "cordic":
++        return U.cordic_exp(n, c, fo, guard=guard, iters=iters)
++    if unit == "bitprod":
++        return U.bitprod_exp(n, c, fo, guard=guard)
++    if unit == "pow2":
++        return U.pow2_exp(n, c, fo, guard=guard, frac_bits=frac)
++    raise ValueError(unit)
+ 
+ 
+ def git_commit():
+@@ -62,12 +82,27 @@
+     ap.add_argument("--test", type=int, default=10000)
+     ap.add_argument("--seed", type=int, default=0)
+     ap.add_argument("--set", action="append", help="override a parameter, e.g. --set theta_plus=0.05")
++    ap.add_argument("--pre-unit", default="float", choices=["float"] + list(UNITS),
++                    help="exp unit of the presynaptic trace (role R1)")
++    ap.add_argument("--pre-fo", type=int, default=8, help="output fraction bits of the R1 unit")
++    ap.add_argument("--w-unit", default="float", choices=["float"] + list(UNITS),
++                    help="exp unit of the weight dependence of the exponential rule (role R2)")
++    ap.add_argument("--w-fo", type=int, default=8, help="output fraction bits of the R2 unit")
++    ap.add_argument("--unit-guard", type=int, default=3)
++    ap.add_argument("--unit-iters", type=int, default=None, help="CORDIC iterations (default Fo+guard+1)")
++    ap.add_argument("--unit-frac", type=int, default=None, help="2^x fraction bits (default Fo+1)")
+     args = ap.parse_args(argv)
+ 
+     os.makedirs(args.out, exist_ok=True)
+-    d = np.load(os.path.join(ROOT, "data", "mnist.npz"))
++    d = np.load(os.environ.get("CORDIC_DATA", "/media/amir/CORDIC/data/mnist.npz"))
+     xtr, ytr, xte, yte = d["x_train"], d["y_train"], d["x_test"], d["y_test"]
+     prm, opt = build(args)
++    c_pre = prm[S.DT] / prm[S.TAU_PRE]
++    n_pre = int(np.ceil((args.pre_fo + 2) * np.log(2) / c_pre)) + 1
++    tab_pre = unit_table(args.pre_unit, c_pre, args.pre_fo, args.unit_guard, args.unit_iters,
++                         args.unit_frac if args.unit_frac else args.pre_fo + 1, n_pre)
++    tab_w = unit_table(args.w_unit, prm[S.BETA] / 256.0, args.w_fo, args.unit_guard, args.unit_iters,
++                       args.unit_frac if args.unit_frac else args.w_fo + 1, 257)
+     S.seed_rng(args.seed)
+     W, delays, theta = S.init_network(784, args.n, prm, 1000 + args.seed)
+     stats_tr = np.zeros(S.NSTAT, dtype=np.int64)
+@@ -77,15 +112,18 @@
+     t0 = time.time()
+     order_tr = np.arange(args.train) % 60000           # MNIST order, as the public code (j % 60000)
+     counts_tr = np.zeros((args.train, args.n), dtype=np.int64)
+-    S.run_phase(xtr, order_tr, True, prm, opt, W, theta, delays, counts_tr, stats_tr, 2000 + args.seed)
++    S.run_phase(xtr, order_tr, True, prm, opt, W, theta, delays, counts_tr, stats_tr, 2000 + args.seed,
++                tab_pre, args.pre_fo, tab_w, args.w_fo)
+     t1 = time.time()
+     order_lb = np.arange(args.label) % 60000
+     counts_lb = np.zeros((args.label, args.n), dtype=np.int64)
+-    S.run_phase(xtr, order_lb, False, prm, opt, W, theta, delays, counts_lb, stats_lb, 3000 + args.seed)
++    S.run_phase(xtr, order_lb, False, prm, opt, W, theta, delays, counts_lb, stats_lb, 3000 + args.seed,
++                tab_pre, args.pre_fo, tab_w, args.w_fo)
+     t2 = time.time()
+     order_te = np.arange(args.test)
+     counts_te = np.zeros((args.test, args.n), dtype=np.int64)
+-    S.run_phase(xte, order_te, False, prm, opt, W, theta, delays, counts_te, stats_te, 4000 + args.seed)
++    S.run_phase(xte, order_te, False, prm, opt, W, theta, delays, counts_te, stats_te, 4000 + args.seed,
++                tab_pre, args.pre_fo, tab_w, args.w_fo)
+     t3 = time.time()
+ 
+     yl = ytr[order_lb]
+@@ -113,6 +151,7 @@
+         "stats_test": {k_: int(stats_te[i]) for i, k_ in enumerate(S.STAT_NAMES)},
+         "mean_exc_spikes_per_test_example": float(counts_te.sum(1).mean()),
+         "theta_mean": float(theta.mean()), "w_colsum_mean": float(W.sum(0).mean()),
++        "pre_table": tab_pre.tolist(), "w_table_len": int(tab_w.shape[0]),
+         "seconds": {"train": t1 - t0, "label": t2 - t1, "test": t3 - t2},
+         "env": {"python": platform.python_version(), "numpy": np.__version__,
+                 "numba": __import__("numba").__version__, "host": platform.node(), "git": git_commit()},
+campaigns.py:
+"""Experiment campaigns: config name -> run_dc.py arguments (campaign.py adds --seed and --out).
+
+All campaigns use the validated float-reference settings (pilot, 2026-11-13): dt 0.5 ms, 150 ms rest, input delays,
+D&C parameters, N = 100 excitatory neurons, 40 000 training examples, labels from a frozen pass over 60 000 training
+examples, 10 000 test examples.
+"""
+
+BASE = ["--n", "100", "--train", "40000", "--label", "60000", "--test", "10000"]
+
+
+def cost(argv):
+    """Relative run time, for scheduling the longest runs first."""
+    def get(flag, default):
+        return float(argv[argv.index(flag) + 1]) if flag in argv else default
+    n = get("--n", 100)
+    return n * (get("--train", 40000) + 0.5 * get("--label", 60000) + 0.5 * get("--test", 10000))
+
+
+CAMPAIGNS = {}
+
+# E2: where is the accuracy knee? Ideal units (LUT = exact rounding) at decreasing output precision.
+#  Rule P: D&C's power-law rule (their main rule); its exponential is the presynaptic trace (R1).
+#  Rule E: D&C's exponential weight-dependence rule with beta = 0.25, as Wu et al. 2021 (TCAS-I) use it; it has both
+#          roles: the presynaptic trace (R1) and the weight-dependence factors e^(-beta w), e^(-beta (1-w)) (R2).
+e2 = {"P_float": BASE + ["--rule", "power"],
+      "E_float": BASE + ["--rule", "expw", "--set", "beta=0.25"]}
+for fo in (2, 3, 4, 5, 6, 8):
+    e2[f"P_preLUT_fo{fo}"] = BASE + ["--rule", "power", "--pre-unit", "lut", "--pre-fo", str(fo)]
+    e2[f"E_preLUT_fo{fo}"] = BASE + ["--rule", "expw", "--set", "beta=0.25", "--pre-unit", "lut", "--pre-fo", str(fo)]
+for fo in (2, 3, 4, 6, 8):
+    e2[f"E_wLUT_fo{fo}"] = BASE + ["--rule", "expw", "--set", "beta=0.25", "--w-unit", "lut", "--w-fo", str(fo)]
+CAMPAIGNS["e2_precision"] = e2

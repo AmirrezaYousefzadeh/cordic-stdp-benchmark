@@ -1,0 +1,132 @@
+{
+ "name": "E_beta3_s1",
+ "args": {
+  "name": "E_beta3_s1",
+  "out": "/media/amir/CORDIC/results/testbed",
+  "n": 100,
+  "rule": "expw",
+  "dt": 0.5,
+  "delays": 1,
+  "reset": 0,
+  "norm": 0,
+  "trace_set": 0,
+  "train": 40000,
+  "label": 60000,
+  "test": 10000,
+  "seed": 1,
+  "set": [
+   "beta=3"
+  ]
+ },
+ "params": {
+  "dt": 0.5,
+  "tau_e": 100.0,
+  "tau_i": 10.0,
+  "tau_ge": 1.0,
+  "tau_gi": 2.0,
+  "vrest_e": -65.0,
+  "vrest_i": -60.0,
+  "vreset_e": -65.0,
+  "vreset_i": -45.0,
+  "vth_e": -52.0,
+  "vth_i": -40.0,
+  "offset": 20.0,
+  "e_exc": 0.0,
+  "e_inh_e": -100.0,
+  "e_inh_i": -85.0,
+  "refr_e": 5.0,
+  "refr_i": 2.0,
+  "theta_plus": 0.05,
+  "tau_theta": 10000000.0,
+  "theta0": 20.0,
+  "w_ei": 10.4,
+  "w_ie": 17.0,
+  "tau_pre": 20.0,
+  "tau_post1": 20.0,
+  "tau_post2": 40.0,
+  "eta_pre": 0.0001,
+  "eta_post": 0.01,
+  "x_tar": 0.4,
+  "mu": 0.2,
+  "beta": 3.0,
+  "w_max": 1.0,
+  "norm_sum": 78.0,
+  "t_pres": 350.0,
+  "t_rest": 150.0,
+  "intensity0": 2.0,
+  "min_spikes": 5.0,
+  "max_delay": 10.0,
+  "w_init": 0.3
+ },
+ "opts": {
+  "rule": 1,
+  "trace_set": 0,
+  "normalize": 0,
+  "delays": 1,
+  "reset": 0,
+  "max_bumps": 30
+ },
+ "acc_test": 0.7825,
+ "acc_test_label10k": 0.7841,
+ "acc_test_label_lasttrain10k": 0.7813,
+ "train_block_acc": [
+  0.7445,
+  0.763,
+  0.7782
+ ],
+ "assigned_neurons": 100,
+ "class_histogram": [
+  13,
+  9,
+  10,
+  9,
+  7,
+  8,
+  10,
+  8,
+  13,
+  13
+ ],
+ "stats_train": {
+  "input_spikes": 178921602,
+  "exc_spikes": 502239,
+  "inh_spikes": 502239,
+  "bumps": 31987,
+  "presentations": 71987,
+  "gave_up": 0,
+  "steps": 71987000
+ },
+ "stats_label": {
+  "input_spikes": 279905513,
+  "exc_spikes": 665013,
+  "inh_spikes": 665013,
+  "bumps": 52484,
+  "presentations": 112484,
+  "gave_up": 0,
+  "steps": 112484000
+ },
+ "stats_test": {
+  "input_spikes": 46360305,
+  "exc_spikes": 113596,
+  "inh_spikes": 113596,
+  "bumps": 8451,
+  "presentations": 18451,
+  "gave_up": 0,
+  "steps": 18451000
+ },
+ "mean_exc_spikes_per_test_example": 10.3628,
+ "theta_mean": 59.86850059207475,
+ "w_colsum_mean": 153.50427314478614,
+ "seconds": {
+  "train": 77.14557957649231,
+  "label": 106.76004266738892,
+  "test": 17.425168991088867
+ },
+ "env": {
+  "python": "3.12.3",
+  "numpy": "1.26.4",
+  "numba": "0.60.0",
+  "host": "cognimachina",
+  "git": "073281d"
+ }
+}

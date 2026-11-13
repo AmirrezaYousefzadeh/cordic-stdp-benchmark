@@ -1,0 +1,22 @@
+25 runs on 8 workers
+P_faithful_s2: acc 0.7807 (label10k 0.7791, lasttrain 0.7742) time 186s
+P_faithful_s1: acc 0.7740 (label10k 0.7740, lasttrain 0.7776) time 186s
+P_faithful_s0: acc 0.7860 (label10k 0.7773, lasttrain 0.7819) time 190s
+P_dt1_reset_s0: acc 0.0980 (label10k 0.0980, lasttrain 0.0980) time 1055s
+P_dt1_reset_s2: acc 0.0980 (label10k 0.0980, lasttrain 0.0980) time 973s
+P_dt1_reset_s1: acc 0.0980 (label10k 0.0980, lasttrain 0.0980) time 1039s
+E_beta3_s0: acc 0.7904 (label10k 0.7915, lasttrain 0.7880) time 200s
+E_beta3_s1: acc 0.7825 (label10k 0.7841, lasttrain 0.7813) time 201s
+E_beta3_s2: acc 0.7947 (label10k 0.7967, lasttrain 0.7944) time 202s
+E_beta0.25_s0: acc 0.8420 (label10k 0.8356, lasttrain 0.8412) time 191s
+E_beta0.25_s1: acc 0.8389 (label10k 0.8376, lasttrain 0.8326) time 194s
+P_dt1_reset_nodelay_s0: acc 0.1413 (label10k 0.1413, lasttrain 0.1413) time 2133s
+E_beta0.25_s2: acc 0.8175 (label10k 0.8220, lasttrain 0.8224) time 200s
+T_code_s0: acc 0.7045 (label10k 0.7063, lasttrain 0.6956) time 589s
+T_code_s1: acc 0.6596 (label10k 0.6544, lasttrain 0.6532) time 542s
+PP_prepost_s0: acc 0.7992 (label10k 0.7984, lasttrain 0.7983) time 511s
+P_dt1_reset_nodelay_s1: acc 0.1397 (label10k 0.1397, lasttrain 0.1290) time 2417s
+T_code_s2: acc 0.6435 (label10k 0.6595, lasttrain 0.6426) time 664s
+PP_prepost_s2: acc 0.8193 (label10k 0.8161, lasttrain 0.8142) time 473s
+PP_prepost_s1: acc 0.8121 (label10k 0.8118, lasttrain 0.8151) time 513s
+P_dt1_reset_nodelay_s2: acc 0.1423 (label10k 0.1423, lasttrain 0.1289) time 2941s

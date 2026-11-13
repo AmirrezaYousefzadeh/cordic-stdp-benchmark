@@ -26,7 +26,7 @@ FOS = [4, 5, 6, 8, 10, 12, 16]
 def domain(c, fo, role):
     nmax = math.ceil((fo + 2) * math.log(2) / c)
     if role == "R2":
-        nmax = min(nmax, 255)          # an 8-bit weight code
+        nmax = min(nmax, 256)          # weight code round(256 w), 0..256 (w = 1 is 256), as in the testbed
     return np.arange(nmax + 1)
 
 

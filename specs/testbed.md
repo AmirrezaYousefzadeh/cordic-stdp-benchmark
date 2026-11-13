@@ -70,3 +70,25 @@ Where the exponentials sit (the two roles of planning.md):
 - Is a labelling pass of 10 000 examples enough (the sweeps would then be 4× cheaper)?
 
 Results: `results/testbed/SUMMARY.md`.
+
+## 6. Pilot results (2026-11-13; N = 100, 3 seeds)
+
+| rule | test accuracy % | comment |
+|---|---|---|
+| exponential weight dependence, β = 0.25 (Wu 2021's setting) | 83.3 ± 1.3 | best; at or above DC15's 82.9 % (power-law rule) |
+| pre-and-post | 81.0 ± 1.0 | |
+| exponential weight dependence, β = 3 | 78.9 ± 0.6 | |
+| power-law (DC15's main rule; DCcode's leftover parameters) | 78.0 ± 0.6 | 4.9 pp under DC15's 82.9 %; DC15 retuned θ and inhibition for N = 100 without publishing the values |
+| triplet + normalisation (DCcode's rule) | 66.9 ± 3.2 | not retuned for N = 100 |
+
+- **The 1 ms step is unusable.** Any variant with dt = 1 ms ends at chance level (9.8–14 %). Forward Euler goes
+  unstable when several inhibitory spikes arrive together: dt/τ_e · g_i ≫ 1, membranes overshoot, spurious spikes
+  follow, θ runs away, and finally the network is silent. dt = 0.5 ms (DCcode's step) is stable. **Decision:
+  dt = 0.5 ms with the 150 ms rest.**
+  - For the integer, hardware-faithful model this means a stable integration: exponential Euler, or
+    current-based synapses.
+- **The labelling pass can be shorter.** Labels from the first 10 000 examples of the labelling pass give the same
+  accuracy as all 60 000, within the seed spread. Sweeps may use 10 000.
+- **N = 400 and the normalised power-law rule were stopped after 95 min** (cancelled; the run time was about 15×
+  the estimate). To be profiled before N = 400 is used.
+- **Run time:** about 3.3 min per N = 100 run on one core (numba, CPU); the GPU is not needed.
