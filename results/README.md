@@ -1,4 +1,4 @@
-# Results so far (2026-11-13)
+# Results so far (2026-11-13, updated in the afternoon with E4 and E5)
 
 For Amir and Edris. Plan: `planning.md`. Reasoning and log: `claude_toughts.md`. Every number below comes from a
 script in this repository (private GitHub `AmirrezaYousefzadeh/cordic-stdp-benchmark`) and can be rerun.
@@ -77,6 +77,58 @@ Findings:
    Every method therefore has to be compared at network-level iso-accuracy, as planned, not at a unit-level error
    bound. This is a hypothesis, to be tested with a deliberately biased table.
 
+## 3b. Confirmation with 10 seeds, the bias test, nearest-spike traces (E4)
+
+Numbers: `e4_confirm/PAIRED.md`. Each configuration is compared with its float reference seed by seed: same
+initial weights and delays, 10 seeds, paired t-test.
+
+| configuration | accuracy % | vs float (pp) | 95 % CI | p |
+|---|---|---|---|---|
+| **Wu's rule, float** | 82.79 ± 1.02 | – | – | – |
+| trace: LUT, 4 bits | 82.59 ± 0.87 | −0.20 | [−1.36, +0.95] | 0.70 |
+| trace: bit product, 4 bits | 83.38 ± 0.80 | +0.58 | [−0.58, +1.75] | 0.29 |
+| trace: cheapest CORDIC, 4 bits | 81.08 ± 0.70 | **−1.71** | [−2.47, −0.95] | 0.001 |
+| weight dependence: LUT, 2 bits | 83.67 ± 1.15 | +0.88 | [+0.15, +1.61] | 0.02 |
+| no weight dependence (β = 0) | 81.49 ± 0.72 | **−1.30** | [−1.88, −0.72] | 0.001 |
+| β = 0 and trace LUT 4 bits | 82.33 ± 0.83 | −0.46 | [−1.12, +0.20] | 0.15 |
+| trace LUT 3 bits, biased +0.25 LSB | 79.84 ± 1.33 | **−2.95** | [−4.30, −1.61] | 0.001 |
+| trace LUT 3 bits, biased −0.25 LSB | 84.04 ± 0.53 | +1.24 | [+0.40, +2.09] | 0.009 |
+| nearest-spike trace, float | 77.60 ± 1.21 | **−5.19** | [−6.38, −4.00] | < 0.001 |
+| nearest-spike trace, LUT 4 bits | 77.77 ± 0.64 | −5.02 | [−6.01, −4.03] | < 0.001 |
+| **power-law rule, float** | 78.47 ± 0.67 | – | – | – |
+| trace: LUT, 3 bits | 77.30 ± 1.09 | −1.17 | [−2.11, −0.23] | 0.02 |
+| trace: cheapest CORDIC, 3 bits | 70.39 ± 0.91 | **−8.08** | [−8.83, −7.32] | < 0.001 |
+| trace LUT 3 bits, biased +0.25 LSB | 71.49 ± 1.46 | **−6.98** | [−7.97, −5.99] | < 0.001 |
+| trace LUT 3 bits, biased −0.25 LSB | 81.02 ± 0.98 | +2.54 | [+1.58, +3.51] | < 0.001 |
+
+Conclusions:
+1. **The bias hypothesis is confirmed.** A table biased by +0.25 LSB loses as much as the cheapest CORDIC (whose
+   bias is about +0.23 LSB); a table biased by −0.25 LSB even gains.
+   - A unit's error bound says little. **What matters is the sign of its mean error:** a positive bias makes the
+     accumulating trace decay too slowly, which acts like a longer τ.
+   - The gain of the negative bias means the default τ = 20 ms is not optimal for these rules. A paper comparison
+     must therefore hold τ fixed and compare at iso-accuracy, as we do.
+2. **A 4-bit trace table and a 2-bit weight-dependence table equal float.**
+3. **Removing the weight-dependence exponential costs 1.3 pp** (significant, but small). Wu 2021 spends two CORDIC
+   units per synapse on a factor that a 2-bit table reproduces exactly.
+4. **Nearest-spike traces cost about 5 pp with Wu's rule.** The traces must accumulate (X·e(Δt) + 1). An
+   event-driven engine therefore needs a multiplier (or the clock-driven form) — engine spec E-D6.
+
+## 3c. Integrator and N = 400 (E5)
+
+Numbers: `e5_integrator/SUMMARY.md`.
+
+- **Forward Euler explodes at N = 400** (more than about 23 simultaneous inhibitory spikes give dt/τ·g_i > 2).
+  **Backward Euler is stable.**
+- **N = 400 with backward Euler, 3 epochs, 3 seeds:**
+  - Wu's rule: 85.35 ± 0.12 %;
+  - power-law: 82.55 ± 0.25 %.
+  - D&C report 87.0 % for the power-law rule. Our power-law reference is about 4.5 pp below their published
+    numbers at both sizes, consistent with their unpublished per-size retuning; the gain from N = 100 to N = 400
+    is reproduced.
+- **At N = 100, backward Euler moves the numbers** (Wu's rule 83.3 → 80.8 %, power-law 78.0 → 77.5 %, 3 seeds).
+  The final numbers must therefore use one integrator for every N (decision for Amir).
+
 ## 4. Unit sizing and RTL (P1, P4)
 
 - **Models:** `model/exp_units.py` (spec `specs/exp_units.md`). 305 independent tests, written by a separate agent
@@ -97,14 +149,7 @@ Findings:
 
 ## 5. Next
 
-- 10 seeds at the key points:
-  - float;
-  - β = 0;
-  - the 4-bit table;
-  - the smallest CORDIC;
-  - the bit product.
-- The biased-table test.
-- A nearest-spike trace variant (it needs no multiplier in hardware).
-- The learning-engine model (Level 2) and the sky130 energy flow with operand streams recorded from the testbed.
-- Specs of the paper-specific methods (Wu 2021's angle-recoding CORDIC, and Heidarpur/Bahrami's
-  product-of-constants).
+- **Decision:** one integrator for all final numbers (backward Euler recommended: stable at every N; the E2–E4
+  screening used forward Euler).
+- **Decisions:** the engine spec (`specs/engine.md`, E-D1 … E-D6) and batch 2 (`specs/exp_units_batch2.md`).
+- Then: the batch-2 models, the engine RTL, the sky130 energy flow.

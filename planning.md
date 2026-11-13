@@ -2,18 +2,18 @@
 
 Status: draft 3, 2026-11-13 (Claude, for Amir and Edris). Amir answered decisions D1–D9 on 2026-11-12 (section 11);
 D2 and D5 he will check again later. My reasoning, the evidence from the papers and my predictions are in
-`claude_toughts.md`; the results so far are in `results/README.md`. Code and results: private GitHub repository
+`claude_toughts.md`; the results so far are in `results/README.md`. Code and results: public GitHub repository
 `AmirrezaYousefzadeh/cordic-stdp-benchmark`. Plan, notes and results summary are shared through the Google Drive
 folder `CORDIC`.
 
-## Progress (2026-11-13)
+## Progress (2026-11-13, afternoon)
 
 | phase | state |
 |---|---|
 | P0 specs | testbed (`specs/testbed.md`), exponential units batch 1 (`specs/exp_units.md`, draft 3), RTL (`specs/rtl_units.md`) written; paper-specific methods (Wu 2021 angle recoding, Heidarpur/Bahrami) still to do |
 | P1 models | batch 1 (LUT, CORDIC, bit product, 2^x, shift decay) done; 305 independent tests pass |
-| P2 testbed | float reference validated at N = 100 (Wu's rule 83.3 %, D&C power-law 78.0 %); dt = 0.5 ms needed (1 ms is unstable); N = 400 needs profiling (about 15× slower than estimated) |
-| P3 sweeps | E2 (precision knee) and E3 (methods at the knee, ablations) done with 3 seeds; 10-seed confirmation next |
+| P2 testbed | float reference validated at N = 100 (Wu's rule 82.8 %, D&C power-law 78.5 %, 10 seeds) and N = 400 (85.4 % / 82.6 %, backward Euler); forward Euler is unstable at N = 400; one integrator to choose for all final numbers |
+| P3 sweeps | E2 (precision knee), E3 (methods, ablations), E4 (10 seeds, bias test, nearest-spike traces) done; see `results/README.md` |
 | P4 RTL | batch 1: 96 modules, all bit-exact against the models; synthesis-only area probe done |
 | P5 sky130, P6 engine, P7 paper | not started |
 

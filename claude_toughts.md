@@ -317,3 +317,19 @@ If the LUT does not win at 8 bits, I will look for the reason before trusting th
   - **Mistake on my side:** I edited `testbed/dc_sim.py` while the pilot was forking workers from it. I noticed it
     and reverted within a minute; no run was affected (verified: no worker started in that window). Since then every
     campaign runs from a frozen copy of the code (`testbed/campaign.py prepare`).
+- **2026-11-13 (day):**
+  - Amir agreed with D10 (Wu's rule as the main rule) and D11 (N = 400 only for final points, after profiling).
+  - **E4 (10 seeds, paired):**
+    - the bias hypothesis is confirmed (+0.25 LSB: −3 to −7 pp; −0.25 LSB: +1.2 to +2.5 pp);
+    - a 4-bit trace and a 2-bit weight dependence equal float;
+    - β = 0 costs 1.3 pp;
+    - nearest-spike traces cost 5 pp, so accumulating traces and a multiplier are needed.
+  - **N = 400 profiling (E5):** forward Euler explodes; backward Euler is stable. Wu's rule reaches 85.4 % and the
+    power-law rule 82.6 % at N = 400. Backward Euler moves N = 100 by up to −2.5 pp, so one integrator is needed
+    for all final numbers.
+  - Wrote proposals: `specs/engine.md` (D5) and `specs/exp_units_batch2.md` (D2).
+  - **Repository made public at Amir's request:**
+    - the history was rewritten to remove `drive_ids.json` (the Drive folder is link-editable);
+    - author email changed to the GitHub noreply address and the Claude trailers removed (Amir's choices);
+    - a recovery bundle of the old history is in the session scratchpad.
+    - GitHub may keep the unreachable old commits until its garbage collection; their SHAs were never public.

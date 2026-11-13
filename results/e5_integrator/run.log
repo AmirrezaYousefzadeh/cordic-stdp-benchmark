@@ -1,0 +1,14 @@
+12 runs on 6 workers
+P_N400_implicit_s2: acc 0.8284 (label10k 0.8145, lasttrain 0.8190) time 2328s
+P_N400_implicit_s0: acc 0.8238 (label10k 0.8219, lasttrain 0.8142) time 2359s
+E_N400_implicit_s1: acc 0.8531 (label10k 0.8534, lasttrain 0.8529) time 2387s
+P_N400_implicit_s1: acc 0.8242 (label10k 0.8254, lasttrain 0.8213) time 2395s
+E_float_implicit_s0: acc 0.8215 (label10k 0.8236, lasttrain 0.8203) time 531s
+E_N400_implicit_s0: acc 0.8525 (label10k 0.8505, lasttrain 0.8522) time 2876s
+E_float_implicit_s1: acc 0.7975 (label10k 0.8002, lasttrain 0.8031) time 562s
+E_float_implicit_s2: acc 0.8039 (label10k 0.7923, lasttrain 0.7961) time 547s
+P_float_implicit_s0: acc 0.7798 (label10k 0.7806, lasttrain 0.7861) time 617s
+P_float_implicit_s1: acc 0.7821 (label10k 0.7798, lasttrain 0.7838) time 626s
+P_float_implicit_s2: acc 0.7639 (label10k 0.7566, lasttrain 0.7552) time 634s
+E_N400_implicit_s2: acc 0.8549 (label10k 0.8528, lasttrain 0.8532) time 4220s
+failed: []
