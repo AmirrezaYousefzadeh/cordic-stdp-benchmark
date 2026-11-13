@@ -10,3 +10,6 @@ __pycache__/
 # large raw outputs (summaries and JSON results are tracked)
 results/**/*_net.npz
 results/**/raw/
+
+# Google Drive mirror ids (the shared folder link must not be public)
+drive_ids.json
