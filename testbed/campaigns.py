@@ -86,3 +86,15 @@ e4 = {
     "E_set_preCORDICmin_fo4": BASE + E + SET + CMIN4,
 }
 CAMPAIGNS["e4_confirm"] = e4
+
+# E5 (2026-11-13; D11 profiling): forward Euler explodes at N = 400 (more than about 23 simultaneous inhibitory
+#  spikes give dt/tau * g_i > 2). Backward Euler (--implicit 1) is unconditionally stable. Does it change N = 100, and
+#  does N = 400 then reach D&C's 87.0 % (power-law rule, 3 epochs)?
+IMP = ["--implicit", "1"]
+N400 = ["--n", "400", "--train", "180000", "--label", "60000", "--test", "10000"]
+CAMPAIGNS["e5_integrator"] = {
+    "E_float_implicit": BASE + E + IMP,
+    "P_float_implicit": BASE + P + IMP,
+    "E_N400_implicit": N400 + E + IMP,
+    "P_N400_implicit": N400 + P + IMP,
+}

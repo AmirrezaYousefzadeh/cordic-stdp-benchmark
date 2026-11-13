@@ -28,7 +28,7 @@ RULES = {"power": RULE_POWER, "expw": RULE_EXPW, "prepost": RULE_PREPOST, "tripl
  REFR_E, REFR_I, THETA_PLUS, TAU_THETA, THETA0, W_EI, W_IE, TAU_PRE, TAU_POST1, TAU_POST2, ETA_PRE, ETA_POST, XTAR,
  MU, BETA, WMAX, NORM_SUM, T_PRES, T_REST, INTENSITY0, MIN_SPIKES, MAX_DELAY, W_INIT, NPARAM) = range(39)
 # ---- option vector layout (int64) -------------------------------------------------------------------------------
-(O_RULE, O_TRACE_SET, O_NORM, O_DELAYS, O_RESET, O_MAX_BUMPS, NOPT) = range(7)
+(O_RULE, O_TRACE_SET, O_NORM, O_DELAYS, O_RESET, O_MAX_BUMPS, O_IMPLICIT, NOPT) = range(8)
 # ---- statistics vector layout (int64) ---------------------------------------------------------------------------
 (S_IN_SPIKES, S_E_SPIKES, S_I_SPIKES, S_BUMPS, S_PRESENTATIONS, S_GAVE_UP, S_STEPS,
  S_PRE_UPD, S_PRE_EVAL, S_POST_LEARN, S_POST_READ, S_WUPD, S_W_EVAL, NSTAT) = range(14)
@@ -45,7 +45,7 @@ PARAM_NAMES = ["dt", "tau_e", "tau_i", "tau_ge", "tau_gi", "vrest_e", "vrest_i",
                "vth_i", "offset", "e_exc", "e_inh_e", "e_inh_i", "refr_e", "refr_i", "theta_plus", "tau_theta",
                "theta0", "w_ei", "w_ie", "tau_pre", "tau_post1", "tau_post2", "eta_pre", "eta_post", "x_tar", "mu",
                "beta", "w_max", "norm_sum", "t_pres", "t_rest", "intensity0", "min_spikes", "max_delay", "w_init"]
-OPT_NAMES = ["rule", "trace_set", "normalize", "delays", "reset", "max_bumps"]
+OPT_NAMES = ["rule", "trace_set", "normalize", "delays", "reset", "max_bumps", "implicit"]
 STAT_NAMES = ["input_spikes", "exc_spikes", "inh_spikes", "bumps", "presentations", "gave_up", "steps",
               "pre_upd", "pre_eval", "post_learn", "post_read", "wupd", "w_eval"]
 
@@ -80,6 +80,9 @@ def default_opts():
     o[O_DELAYS] = 1         # input->excitatory delays, uniform in [0, MAX_DELAY) ms, as in the public code
     o[O_RESET] = 0          # 0: 150 ms rest without input; 1: reset all variables instead (faster)
     o[O_MAX_BUMPS] = 30     # give up raising the input rate after this many repetitions of one example
+    o[O_IMPLICIT] = 0       # 0: forward Euler for v (Brian 1, as D&C); 1: backward Euler, unconditionally stable
+                            # (forward Euler explodes when dt/tau * g_i > 2, e.g. > 23 simultaneous inhibitory spikes
+                            # at dt = 0.5 ms: seen at N = 400 and at dt = 1 ms)
     return o
 
 
@@ -152,6 +155,7 @@ def run_phase(images, order, learn, prm, opt, W, theta, delays, counts, stats, s
     eta_pre = prm[ETA_PRE]; eta_post = prm[ETA_POST]; xtar = prm[XTAR]; mu = prm[MU]; beta = prm[BETA]
     wmax = prm[WMAX]
     use_delays = opt[O_DELAYS] == 1
+    implicit = opt[O_IMPLICIT] == 1
     D = int(prm[MAX_DELAY] / dt) + 1
     ring = np.zeros((D, n))
 
@@ -252,6 +256,9 @@ def run_phase(images, order, learn, prm, opt, W, theta, delays, counts, stats, s
                     if refr_e[j] > 0:
                         refr_e[j] -= 1
                         v_e[j] = vreset_e
+                    elif implicit:
+                        v_e[j] = (v_e[j] + ke * (vrest_e + ge_e[j] * eexc + gi_e[j] * einh_e)) / \
+                            (1.0 + ke * (1.0 + ge_e[j] + gi_e[j]))
                     else:
                         v = v_e[j]
                         v_e[j] = v + ke * ((vrest_e - v) + ge_e[j] * (eexc - v) + gi_e[j] * (einh_e - v))
@@ -274,6 +281,9 @@ def run_phase(images, order, learn, prm, opt, W, theta, delays, counts, stats, s
                     if refr_i[j] > 0:
                         refr_i[j] -= 1
                         v_i[j] = vreset_i
+                    elif implicit:
+                        v_i[j] = (v_i[j] + ki * (vrest_i + ge_i[j] * eexc + gi_i[j] * einh_i)) / \
+                            (1.0 + ki * (1.0 + ge_i[j] + gi_i[j]))
                     else:
                         v = v_i[j]
                         v_i[j] = v + ki * ((vrest_i - v) + ge_i[j] * (eexc - v) + gi_i[j] * (einh_i - v))

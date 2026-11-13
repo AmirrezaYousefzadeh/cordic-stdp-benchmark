@@ -63,6 +63,7 @@ def build(args):
     opt[S.O_NORM] = int(args.norm)
     opt[S.O_DELAYS] = int(args.delays)
     opt[S.O_RESET] = int(args.reset)
+    opt[S.O_IMPLICIT] = int(args.implicit)
     for kv in args.set or []:
         k, v = kv.split("=")
         prm[S.PARAM_NAMES.index(k)] = float(v)
@@ -86,6 +87,7 @@ def main(argv=None):
     ap.add_argument("--reset", type=int, default=0, help="1: reset instead of the 150 ms rest")
     ap.add_argument("--norm", type=int, default=0)
     ap.add_argument("--trace-set", type=int, default=0)
+    ap.add_argument("--implicit", type=int, default=0, help="1: backward-Euler membrane integration (stable)")
     ap.add_argument("--train", type=int, default=40000, help="training examples (D&C: 40000 for N=100)")
     ap.add_argument("--label", type=int, default=60000, help="examples of the frozen labelling pass")
     ap.add_argument("--test", type=int, default=10000)
