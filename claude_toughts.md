@@ -333,3 +333,7 @@ If the LUT does not win at 8 bits, I will look for the reason before trusting th
     - author email changed to the GitHub noreply address and the Claude trailers removed (Amir's choices);
     - a recovery bundle of the old history is in the session scratchpad.
     - GitHub may keep the unreachable old commits until its garbage collection; their SHAs were never public.
+- **2026-11-13 (later):** Amir dropped Google Drive: "delete everything, we will continue with GitHub".
+  - The Drive mirror and its local id file are gone; Edris follows the public repository.
+  - Trashing the Drive folder `CORDIC` failed because the claude.ai Drive connector timed out and reported
+    "credential validation failed". Amir can delete the folder himself, or I trash it once the connector works.

@@ -3,8 +3,8 @@
 Status: draft 3, 2026-11-13 (Claude, for Amir and Edris). Amir answered decisions D1–D9 on 2026-11-12 (section 11);
 D2 and D5 he will check again later. My reasoning, the evidence from the papers and my predictions are in
 `claude_toughts.md`; the results so far are in `results/README.md`. Code and results: public GitHub repository
-`AmirrezaYousefzadeh/cordic-stdp-benchmark`. Plan, notes and results summary are shared through the Google Drive
-folder `CORDIC`.
+`AmirrezaYousefzadeh/cordic-stdp-benchmark`, which is also where Edris follows the work (Google Drive is no
+longer used, Amir's decision of 2026-11-13).
 
 ## Progress (2026-11-13, afternoon)
 
@@ -34,7 +34,8 @@ paper lives in the Overleaf project (`paper/` is a local git clone of it).
 Taken by Amir on 2026-11-12: D1–D9 of section 11. In short: MNIST only; the recommended methods (D2, to be checked
 again); N_exc = 100 and 400; iso-accuracy within 0.5 pp over 10 seeds; Level 1 for all methods and Level 2 for the
 best ones (D5, to be checked again); a GitHub repository (made public on 2026-11-13 at Amir's request); **we do not contact the papers' authors**; neutral
-wording on the papers' inconsistencies; Edris follows everything through the shared Drive folder.
+wording on the papers' inconsistencies; Edris follows everything through the GitHub repository (first through a
+shared Drive folder; Drive was dropped on 2026-11-13).
 
 ## 1. The question and the claim
 
@@ -203,7 +204,7 @@ CORDIC/
   planning.md            this file
   claude_toughts.md      my reasoning, reading notes, log
   references/            the PDFs (read-only)
-  paper/                 Overleaf git clone (pushes only after Amir's OK; Edris sees every push); not copied to Drive
+  paper/                 Overleaf git clone (pushes only after Amir's OK; Edris sees every push); not in this repo
   specs/                 one spec per method + testbed spec
   model/                 bit-accurate Python models (integer only)
   tests/                 independent tests of the models
@@ -217,10 +218,8 @@ CORDIC/
 - **Git:** one local git repository for everything except `paper/` (it has its own Overleaf remote).
 - **D6 (decided), GitHub:** created private on 2026-11-13 and made public the same day at Amir's request
   (`AmirrezaYousefzadeh/cordic-stdp-benchmark`; noreply author email, no Claude trailer, Drive ids never committed).
-- **Google Drive:** the folder `CORDIC` in Amir's Drive holds the plan, the notes and later the specs and results
-  summaries, for Edris to follow (D9). The local folder is the master copy; Claude uploads new versions after each
-  change. The Drive connector cannot overwrite a file, so an update is a new upload plus moving the old file to the
-  trash; `drive_ids.json` keeps the current file ids. The papers are not copied: Edris shared them already
+- **Collaboration with Edris:** through the public GitHub repository (D9, changed on 2026-11-13). The Google
+  Drive mirror used before is dropped. The papers stay outside the repository (copyright); Edris has them
   ("CORDIC for SNNs.rar").
 
 ## 7. How the agents work (Amir's rule: "if the tests pass, trust the implementation")
@@ -287,6 +286,6 @@ A first full draft is possible about 8 weeks after approval; TCAS-II has no fixe
 | D6 | code hosting | private GitHub now, public at submission | agreed |
 | D7 | split of the work | as in section 9 (originally including e-mails to the authors) | agreed, but **we cannot contact the authors** |
 | D8 | how to treat the papers' inconsistencies | neutral and factual: a short "reproducibility notes" paragraph or supplementary table, only for what affects the comparison | agreed |
-| D9 | when to tell Edris | after Amir approves this plan | Edris follows everything through the shared Drive folder |
+| D9 | when to tell Edris | after Amir approves this plan | Edris follows everything through the shared Drive folder; changed on 2026-11-13: through the GitHub repository, Drive dropped |
 | D10 | main learning rule of the testbed (new, 2026-11-13) | Wu 2021's exponential weight-dependence rule with β = 0.25 as the main rule (83.3 %, and it uses the exponential in both roles); D&C's power-law rule second | agreed (2026-11-13) |
 | D11 | N = 400 (new, 2026-11-13) | only for the final confirmation points, after profiling why it ran about 15× slower than estimated | agreed (2026-11-13) |
